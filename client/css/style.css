@@ -1,0 +1,40 @@
+html{
+    font-size: 62.5%;
+}
+
+body, html, * {
+    padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    background-color: #D9D9D9;
+}
+
+.control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    margin: auto;
+}
+
+.default {
+    width: 16rem;
+    height: 16rem;
+    background-color: #414141;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 19px 5px rgba(0, 0, 0, 0.20);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.default-inside {
+    height: 90%;
+    width: 90%;
+    background-color: #D9D9D9;
+    border-radius: 0.7rem;
+    box-shadow: 0px 0px 12px 6px rgba(217, 217, 217, 0.2);
+}
