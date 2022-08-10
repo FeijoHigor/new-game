@@ -50,6 +50,34 @@ io.on('connection', (socket) => {
             console.log('Waiting control enter')
         }
     })
+
+    socket.on('enterRoom', (params) => {
+        const roomId = params.roomId
+
+        const checkRoom = (id) => {
+            var index;
+            game['rooms'].forEach((e, i) => {
+                if(e.id == id) {
+                    index = {e, i}
+                }else {
+                    index = -1
+                }
+            })
+
+            return index
+        }
+
+        const room = checkRoom(roomId)
+
+        if(room != -1) {
+            game['rooms'][room.i].gameControl = socket.id
+            socket.join(roomId)
+            console.log('Control is connected, ready to play?')
+        }else {
+            socket.emit('roomNotFound', {roomId})
+            console.log('Room not found ', roomId)
+        }
+    })
 })
 
 app.get('/', (req, res) => {

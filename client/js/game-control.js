@@ -4,8 +4,12 @@ socket.on('connect', () => {
     console.log(socket.id)
     const roomId = window.location.search.replace('?roomId=', '')
     console.log(roomId)
+    socket.emit('enterRoom', {roomId})
 })
 
+socket.on('roomNotFound', (params) => {
+    console.log('Sala ', params.roomId, ' não encontrada')
+})
 
 const btn = document.getElementsByClassName('btn')
 
@@ -18,3 +22,4 @@ btn[0].addEventListener('click', () => {
     console.log('left')
     socket.emit('btnPressed', {btn: 'left'})
 })
+
