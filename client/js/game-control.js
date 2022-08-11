@@ -23,3 +23,6 @@ btn[0].addEventListener('click', () => {
     socket.emit('btnPressed', {btn: 'left'})
 })
 
+document.addEventListener('keydown', (e) => {
+    socket.emit('keyPress', {key: e.key})
+})

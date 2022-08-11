@@ -20,12 +20,21 @@ const game = {
 io.on('connection', (socket) => {
 
     const checkRoom = (id) => {
-        var index;
+        var index = -1
         game['rooms'].forEach((e, i) => {
             if(e.id == id) {
                 index = {e, i}
-            }else {
-                index = -1
+            }
+        })
+
+        return index
+    }
+
+    const checkPlayer = (id, array) => {
+        var index = -1
+        array.forEach((e, i) => {
+            if(e.id == id) {
+                index = {e, i}
             }
         })
 
@@ -35,11 +44,9 @@ io.on('connection', (socket) => {
     socket.on('keyPress', (params) => {
         console.log('key ', params.key, ' was pressed')
         if(params.key === 'i') {
-            console.log(game)
-        }else if(params.key === 'c') {
-            game['rooms'] = []
-        }else if(params.key == 'p') {
-            const roomId = Array.from(socket.adapter.rooms)[1][0]
+            console.log(game['rooms'])
+        }else if (params.key == 'p') {
+            const roomId = Array.from(socket.rooms)[1]
             console.log(checkRoom(roomId)['e']['players'])
         }
     })
@@ -80,6 +87,26 @@ io.on('connection', (socket) => {
             socket.emit('roomNotFound', {roomId})
             console.log('Room not found ', roomId)
         }
+    })
+
+    socket.on('disconnect', () => {
+        const roomId = Array.from(socket.adapter.rooms)[1] ? Array.from(socket.adapter.rooms)[1][0] : ''
+
+        const room = checkRoom(roomId)
+
+        const removePlayer = checkPlayer(socket.id, room['e']['players'])
+
+        if(room == -1) {
+            socket.emit('roomNotFound', {roomId: ''})
+        }else if(room['e'].gameScreen == socket.id) {
+            console.log(`A sala ${roomId} foi desconctada.`)
+            game['rooms'].splice(room['i'], 1)
+            socket.to(roomId).emit('disconnectedRoom', {room: room['e']})
+        }else if (removePlayer != -1) {
+            console.log(`O player ${socket.id} saiu da sala ${roomId}.`)
+            room['e']['players'].splice(removePlayer['i'], 1)
+        }
+
     })
 })
 
