@@ -11,7 +11,13 @@ socket.on('roomNotFound', (params) => {
     console.log('Sala ', params.roomId, ' não encontrada')
 })
 
-const btn = document.getElementsByClassName('btn')
+const btn = Array.from(document.getElementsByClassName('btn'))
+
+btn.forEach((e, i) => {
+    e.addEventListener('click', () => {
+        console.log(e.id)
+    })
+})
 
 btn[1].addEventListener('click', () => {
     console.log('right')

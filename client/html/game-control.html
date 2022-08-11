@@ -10,10 +10,22 @@
     <script src="http://localhost:3003/socket.io/socket.io.js"></script>
 </head>
 <body>
-    <section class="control">
-        <div class="default btn right"><span class="default-inside btn-inside"></span></div>
-        <div class="default btn left"><span class="default-inside btn-inside"></span></div>
-    </section>
+    <div class="control">
+        <section class="arrows">
+            <div class="horizontal-btns">
+                <div class="default btn left" id="left"><span class="default-inside btn-inside"></span></div>
+                <div class="default btn right" id="right"><span class="default-inside btn-inside"></span></div>
+            </div>
+            <div class="vertical-btns">
+                <div class="default btn up" id="up"><span class="default-inside btn-inside"></span></div>
+                <div class="default btn down" id="down"><span class="default-inside btn-inside"></span></div>
+            </div>
+        </section>
+        <section class="shot">
+
+        </section>
+    </div>
+
     <script src="../js/game-control.js"></script>
 </body>
 </html>
