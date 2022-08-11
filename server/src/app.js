@@ -19,12 +19,28 @@ const game = {
 
 io.on('connection', (socket) => {
 
+    const checkRoom = (id) => {
+        var index;
+        game['rooms'].forEach((e, i) => {
+            if(e.id == id) {
+                index = {e, i}
+            }else {
+                index = -1
+            }
+        })
+
+        return index
+    }
+
     socket.on('keyPress', (params) => {
         console.log('key ', params.key, ' was pressed')
         if(params.key === 'i') {
             console.log(game)
         }else if(params.key === 'c') {
             game['rooms'] = []
+        }else if(params.key == 'p') {
+            const roomId = Array.from(socket.adapter.rooms)[1][0]
+            console.log(checkRoom(roomId)['e']['players'])
         }
     })
 
@@ -40,7 +56,7 @@ io.on('connection', (socket) => {
         if(game['rooms'].indexOf(newRoom) > 0) {
             socket.emit('roomExists', {roomId: newRoom})
         }else {
-            const room = {id: newRoom, gameScreen: socket.id, gameControl: 0}
+            const room = {id: newRoom, gameScreen: socket.id, players: []}
             game['rooms'].push(room)
 
             socket.join(newRoom)
@@ -54,25 +70,12 @@ io.on('connection', (socket) => {
     socket.on('enterRoom', (params) => {
         const roomId = params.roomId
 
-        const checkRoom = (id) => {
-            var index;
-            game['rooms'].forEach((e, i) => {
-                if(e.id == id) {
-                    index = {e, i}
-                }else {
-                    index = -1
-                }
-            })
-
-            return index
-        }
-
         const room = checkRoom(roomId)
 
         if(room != -1) {
-            game['rooms'][room.i].gameControl = socket.id
+            game['rooms'][room.i]['players'].push({id: socket.id})
             socket.join(roomId)
-            console.log('Control is connected, ready to play?')
+            console.log(`Player ${socket.id} connected. Ready to play?`)
         }else {
             socket.emit('roomNotFound', {roomId})
             console.log('Room not found ', roomId)
