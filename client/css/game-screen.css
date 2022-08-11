@@ -9,7 +9,11 @@
 }
 
 .default-inside {
-    border-radius: 1.4rem;
-    width: 95%;
-    height: 95%;
+    border-radius: 0.5%;
+    width: 93%;
+    height: 93%;
+    box-shadow: inset 0px 0px 8px 6px rgba(0, 0, 0, 0.229);
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }
