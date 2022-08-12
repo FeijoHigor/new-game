@@ -16,17 +16,8 @@ const btn = Array.from(document.getElementsByClassName('btn'))
 btn.forEach((e, i) => {
     e.addEventListener('click', () => {
         console.log(e.id)
+        socket.emit('btnPressed', {btn: e.id})
     })
-})
-
-btn[1].addEventListener('click', () => {
-    console.log('right')
-    socket.emit('btnPressed', {btn: 'right'})
-})
-
-btn[0].addEventListener('click', () => {
-    console.log('left')
-    socket.emit('btnPressed', {btn: 'left'})
 })
 
 document.addEventListener('keydown', (e) => {

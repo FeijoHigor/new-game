@@ -41,6 +41,28 @@ io.on('connection', (socket) => {
         return index
     }
 
+    const getRoomId = (socketId) => {
+        var room = -1
+
+        game['rooms'].forEach((e, i) => {
+            if(e.gameScreen == socketId) {
+                room = {room: e.id, iRoom: i, type: 'screen'}
+            }
+        })
+
+        if(room == -1) {
+            game['rooms'].forEach((eRoom, iRoom) => {
+                eRoom.players.forEach((ePlayer, iPlayer) => {
+                    if(ePlayer.id == socketId) {
+                        room = {room: eRoom.id, iRoom: iRoom, iPlayer: iPlayer, type: 'control'}
+                    }
+                })
+            })
+        }
+
+        return room
+    }
+
     socket.on('keyPress', (params) => {
         console.log('key ', params.key, ' was pressed')
         if(params.key === 'i') {
@@ -60,8 +82,12 @@ io.on('connection', (socket) => {
 
     socket.on('createRoom', (params) => {
         const newRoom = params.roomId
-        if(game['rooms'].indexOf(newRoom) > 0) {
+        const roomExists = checkRoom(newRoom)
+        console.log('roooooom', params)
+
+        if(roomExists != -1) {
             socket.emit('roomExists', {roomId: newRoom})
+            return
         }else {
             const room = {id: newRoom, gameScreen: socket.id, players: []}
             game['rooms'].push(room)
@@ -90,13 +116,28 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', () => {
-        const roomId = Array.from(socket.adapter.rooms)[1] ? Array.from(socket.adapter.rooms)[1][0] : ''
 
-        const room = checkRoom(roomId)
-
-        const removePlayer = checkPlayer(socket.id, room['e']['players'])
+        const room = getRoomId(socket.id)
+        console.log(room)
 
         if(room == -1) {
+            console.log('?????')
+        }else if(room.type == 'control') {
+            console.log(`O player ${socket.id} saiu da sala ${room.id}.`)
+            game['rooms'][room.iRoom]['players'].splice(room.iPlayer, 1)
+        }else if(room.type == 'screen') {
+            console.log(`A sala ${room.room} foi desconctada.`)
+            game['rooms'].splice(room.iRoom, 1)
+        }
+
+        /*const room = checkRoom(roomId)
+
+        const removePlayer = room != -1 ? checkPlayer(socket.id, room['e']['players']) : -1
+
+        console.log(room)
+
+        if(room == -1) {
+            console.log('Sala não encontrada', room)
             socket.emit('roomNotFound', {roomId: ''})
         }else if(room['e'].gameScreen == socket.id) {
             console.log(`A sala ${roomId} foi desconctada.`)
@@ -105,7 +146,7 @@ io.on('connection', (socket) => {
         }else if (removePlayer != -1) {
             console.log(`O player ${socket.id} saiu da sala ${roomId}.`)
             room['e']['players'].splice(removePlayer['i'], 1)
-        }
+        }*/
 
     })
 })
