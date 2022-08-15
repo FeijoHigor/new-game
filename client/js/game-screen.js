@@ -21,6 +21,8 @@ socket.on('createdRoom', (params) => {
     enterGameBtn.href = `http://localhost:5500/client/html/game-control.html?roomId=${roomId}`
 })
 
+
+
 document.addEventListener('keydown', (e) => {
     socket.emit('keyPress', {key: e.key})
 })
