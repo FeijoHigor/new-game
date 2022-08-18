@@ -20,37 +20,41 @@ function game(params) {
 
     function btnPressed(params) {
         const {socketId, room, btnPressed} = params
+        const callSoocket = params.callSoocket
 
         if(btnPressed.id == 'left') {
             state['rooms'][room.iRoom]['players'][room.iPlayer].playerX--
         }else if(btnPressed.id == 'up') {
-            state['rooms'][room.iRoom]['players'][room.iPlayer].playerY++
+            state['rooms'][room.iRoom]['players'][room.iPlayer].playerY--
         }else if(btnPressed.id == 'right') {
             state['rooms'][room.iRoom]['players'][room.iPlayer].playerX++
         }else if(btnPressed.id == 'down') {
-            state['rooms'][room.iRoom]['players'][room.iPlayer].playerY--
+            state['rooms'][room.iRoom]['players'][room.iPlayer].playerY++
         }else if(btnPressed.id == 'ready') {
             if(btnPressed.checked == true) {
                 state['rooms'][room.iRoom]['players'][room.iPlayer].playerStatus = 'ready'
                 const canStart = checkStart(state['rooms'][room.iRoom]['players'])
                 if(canStart) {
+                    console.log('iniciando contagem')
                     startTimer = setTimeout(() => {
                         state['rooms'][room.iRoom]['players'].forEach((e, i) => {
                             e.playerStatus = 'inGame'
                         })
+                        console.log('iniciou jogo')
+                        callSoocket('startGame', { room })
                     }, 3000)
                 }
             }else if(btnPressed.checked == false) {
                 const stopTimer = () => {
                     clearTimeout(startTimer)
-                    console.log('stoppppp')
+                    console.log('stoped the timer')
                 }
                 stopTimer()
                 state['rooms'][room.iRoom]['players'][room.iPlayer].playerStatus = 'waiting'
             }
         }
 
-        console.log(state['rooms'][room.iRoom]['players'])
+        callSoocket('updateState', {state: state['rooms'][room.iRoom], room})
     }
 
     return {

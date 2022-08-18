@@ -20,6 +20,10 @@ btn.forEach((e, i) => {
     })
 })
 
+socket.on('testCallBack', (params) => {
+    console.log(params)
+})
+
 document.addEventListener('keydown', (e) => {
     socket.emit('keyPress', {key: e.key})
 })

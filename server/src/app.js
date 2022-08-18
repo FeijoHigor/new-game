@@ -64,6 +64,19 @@ io.on('connection', (socket) => {
         return room
     }
 
+    function callSoocket(socketType, socketParams) {
+
+        const params = socketParams
+
+        if(socketType == 'updateState') {
+            socket.to(params.room['room']).emit('state', {state: params.state})
+        }else if(socketType == 'startGame') {
+            console.log(params.room, ' started the game')
+            socket.to(params.room).emit('startGame', {room: params.room})
+        }
+
+    }
+
     socket.on('keyPress', (params) => {
         console.log('key ', params.key, ' was pressed')
         if(params.key === 'i') {
@@ -80,7 +93,7 @@ io.on('connection', (socket) => {
         const btnPressed = params.btn
         const room = getRoomId(socket.id)
 
-        game.btnPressed({ socket: socket.id, room, btnPressed })
+        game.btnPressed({ socket: socket.id, room, btnPressed, callSoocket: callSoocket })
     })
 
     socket.on('createRoom', (params) => {
