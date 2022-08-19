@@ -20,16 +20,25 @@ function game(params) {
 
     function btnPressed(params) {
         const {socketId, room, btnPressed} = params
+        const roomState = state['rooms'][room.iRoom]
         const callSoocket = params.callSoocket
 
         if(btnPressed.id == 'left') {
-            state['rooms'][room.iRoom]['players'][room.iPlayer].playerX--
+            if(roomState['players'][room.iPlayer].playerX != 0) {
+                state['rooms'][room.iRoom]['players'][room.iPlayer].playerX--                
+            }
         }else if(btnPressed.id == 'up') {
-            state['rooms'][room.iRoom]['players'][room.iPlayer].playerY--
+            if(roomState['players'][room.iPlayer].playerY != 0) {
+                state['rooms'][room.iRoom]['players'][room.iPlayer].playerY--
+            } 
         }else if(btnPressed.id == 'right') {
-            state['rooms'][room.iRoom]['players'][room.iPlayer].playerX++
+            if(roomState['players'][room.iPlayer].playerX != 18) {
+                state['rooms'][room.iRoom]['players'][room.iPlayer].playerX++
+            }
         }else if(btnPressed.id == 'down') {
-            state['rooms'][room.iRoom]['players'][room.iPlayer].playerY++
+            if(roomState['players'][room.iPlayer].playerY != 18) {
+                state['rooms'][room.iRoom]['players'][room.iPlayer].playerY++
+            }
         }else if(btnPressed.id == 'ready') {
             if(btnPressed.checked == true) {
                 state['rooms'][room.iRoom]['players'][room.iPlayer].playerStatus = 'ready'
@@ -54,12 +63,45 @@ function game(params) {
             }
         }
 
-        callSoocket('updateState', {state: state['rooms'][room.iRoom], room})
+        callSoocket('updateState', {state: state['rooms'][room.iRoom], room: room.room})
+    }
+
+    function enterPlayer(params) {
+        const callSoocket = params.callSoocket
+        const socketId = params.socketId
+        const room = params.room
+        console.log(room)
+        
+        if(room != -1) {
+            const color = () => [parseInt(Math.random() * 255), parseInt(Math.random() * 255), parseInt(Math.random() * 255)].toString()
+
+            const newColor = color()
+            const playerPosition = () => {
+                return parseInt(Math.random() * 18)
+            }
+
+            const newPlayer = {
+                id: socketId,
+                playerStatus: 'waiting',
+                playerX: playerPosition(),
+                playerY: playerPosition(),
+                color: newColor
+            }
+
+            state['rooms'][room.i]['players'].push(newPlayer)
+
+            callSoocket('joinRoom', {roomId: room.e.id})
+            callSoocket('updateState', {state: state['rooms'][room.iRoom], room: room.e.id})
+            console.log(`Jogador conectado`)
+        }else {
+            console.log('Sala não encontrada: ', room.e.id)
+        }
     }
 
     return {
         state,
         btnPressed,
+        enterPlayer
     }
 
 }

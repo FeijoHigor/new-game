@@ -26,6 +26,11 @@ socket.on('createdRoom', (params) => {
 socket.on('state', (params) => {
     game = params.state
 })
+
+socket.on('hello', (params) => {
+    console.log('foi')
+})
+
 const screen = document.getElementById('screen')
 const context = screen.getContext('2d')
 
@@ -37,12 +42,10 @@ function renderScreen() {
     context.fillStyle = '#D9D9D9'
     context.fillRect(0, 0, 20, 20)
     game['players'].forEach((e, i) => {
-        context.fillStyle = 'black'
+        context.fillStyle = `rgba(${e.color},0.3)`
         context.fillRect(e.playerX, e.playerY, 2, 2)
     });
     
-    
-
     requestAnimationFrame(renderScreen)
 }
 

@@ -69,10 +69,13 @@ io.on('connection', (socket) => {
         const params = socketParams
 
         if(socketType == 'updateState') {
-            socket.to(params.room['room']).emit('state', {state: params.state})
+            console.log(params.room)
+            socket.to(params.room).emit('state', {state: params.state})
         }else if(socketType == 'startGame') {
             console.log(params.room, ' started the game')
             socket.to(params.room).emit('startGame', {room: params.room})
+        }else if(socketType == 'joinRoom') {
+            socket.join(params.roomId)
         }
 
     }
@@ -115,19 +118,29 @@ io.on('connection', (socket) => {
     })
 
     socket.on('enterRoom', (params) => {
-        const roomId = params.roomId
+
+        const room = checkRoom(params.roomId)
+        game.enterPlayer({socketId: socket.id, room, callSoocket})
+
+        /*const roomId = params.roomId
 
         const room = checkRoom(roomId)
 
         if(room != -1) {
+
+            const color = () => [parseInt(Math.random() * 255), parseInt(Math.random() * 255), parseInt(Math.random() * 255)].toString()
+
+            const newColor = color()
+            console.log(roomId)
             //player status: 'waiting', 'ready', 'inGame'
-            game.state['rooms'][room.i]['players'].push({id: socket.id, playerStatus: 'waiting', playerX: 5, playerY: 5})
+            game.state['rooms'][room.i]['players'].push({id: socket.id, playerStatus: 'waiting', playerX: 5, playerY: 5, color: newColor})
             socket.join(roomId)
+            socket.to(roomId).emit('hello', {state: game.state['rooms'][room.i]})
             console.log(`Jogador ${socket.id} foi conectado. Pronto para jogar?`)
         }else {
             socket.emit('roomNotFound', {roomId})
             console.log('Sala não encontrada: ', roomId)
-        }
+        }*/
     })
 
     socket.on('disconnect', () => {
