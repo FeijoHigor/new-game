@@ -100,6 +100,19 @@ function game(params) {
 
     function leavePlayer(params) {
         
+        const { room, socketId, callSoocket } = params
+
+        if(room == -1) {
+            console.log('Socket não é nem jogador nem tela')
+        }else if(room.type == 'control') {
+            console.log(`O jogador ${socketId} saiu da sala ${room.room}.`)
+            state['rooms'][room.iRoom]['players'].splice(room.iPlayer, 1)
+            callSoocket('updateState', {state: state['rooms'][room.iRoom], room: room.room})
+        }else if(room.type == 'screen') {
+            console.log(`A sala ${room.room} foi desconctada.`)
+            state['rooms'].splice(room.iRoom, 1)
+            callSoocket('leaveScreen', {room: room.room})
+        }
     }
 
     return {
