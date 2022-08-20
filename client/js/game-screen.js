@@ -7,7 +7,6 @@ const createRoom = () => Math.floor(Math.random() * 9999999999)
 var game = {players: []}
 
 socket.on('connect', () => {
-    console.log('hello ',socket.id)
     socket.emit('createRoom', {roomId: createRoom()})
 })
 
@@ -18,23 +17,25 @@ socket.on('roomExists', (params) => {
 socket.on('createdRoom', (params) => {
     const roomId = params.roomId
 
-    console.log(roomId)
     enterGameBtn.style.display = 'block'
     enterGameBtn.href = `http://localhost:5500/client/html/game-control.html?roomId=${roomId}`
+    const qrCode = document.getElementById('qr-code')
+
+    qrCode.setAttribute('src', `https://chart.googleapis.com/chart?chs=510x510&cht=qr&chco=414141,c1c1c1&chf=bg,s,c1c1c1&chl=http://localhost:5500/html/game-control.html?roomId=${roomId}`)
+})
+
+socket.on('playerEntered', (params) => {
+    qrCode.style.display = 'none'
 })
 
 socket.on('state', (params) => {
-    console.log('foi', params.state)
     game = params.state
 })
-
 
 const screen = document.getElementById('screen')
 const context = screen.getContext('2d')
 
 renderScreen()
-
-
 
 function renderScreen() {
     context.fillStyle = '#D9D9D9'

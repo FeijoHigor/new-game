@@ -28,7 +28,7 @@ body {
 .default-inside {
     height: 90%;
     width: 90%;
-    background-color: #D9D9D9;
+    background-color: #c1c1c1;
     border-radius: 0.7rem;
     box-shadow: 0px 0px 12px 6px rgba(217, 217, 217, 0.2);
 }
