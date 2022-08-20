@@ -69,7 +69,7 @@ io.on('connection', (socket) => {
         const params = socketParams
 
         if(socketType == 'updateState') {
-            console.log(params.room)
+            console.log('test', params.state)
             socket.to(params.room).emit('state', {state: params.state})
         }else if(socketType == 'startGame') {
             console.log(params.room, ' started the game')
@@ -92,7 +92,6 @@ io.on('connection', (socket) => {
 
 
     socket.on('btnPressed', (params) => {
-        console.log(params.btn)
         const btnPressed = params.btn
         const room = getRoomId(socket.id)
 

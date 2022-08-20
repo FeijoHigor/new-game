@@ -91,17 +91,22 @@ function game(params) {
             state['rooms'][room.i]['players'].push(newPlayer)
 
             callSoocket('joinRoom', {roomId: room.e.id})
-            callSoocket('updateState', {state: state['rooms'][room.iRoom], room: room.e.id})
+            callSoocket('updateState', {state: state['rooms'][room.i], room: room.e.id})
             console.log(`Jogador conectado`)
         }else {
-            console.log('Sala não encontrada: ', room.e.id)
+            console.log('Sala não encontrada: ', room)
         }
+    }
+
+    function leavePlayer(params) {
+        
     }
 
     return {
         state,
         btnPressed,
-        enterPlayer
+        enterPlayer,
+        leavePlayer
     }
 
 }
