@@ -18,9 +18,34 @@
     image-rendering: crisp-edges;
 }
 
-img#qr-code {
-    position: absolute;
+.qr-code {
+    position:absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+img#qr-code {
+    transition: 0.5s;
+}
+
+img#qr-code:hover{
+    filter: blur(4px);
+}
+
+
+.openQrCode  {
+    width: 20rem;
+    height: 4rem;
+    background-color: #e60000;
+    border-radius: 0.6rem;
+    position: absolute;
+    left: 50%;
+    top: -20%;
+    transition: 0.5s;
+    transform: translate(-50%, 0);
+}
+
+.openQrCode:checked {
+    top: 1.5%;
 }

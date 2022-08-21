@@ -10,9 +10,13 @@
     <script src="http://localhost:3003/socket.io/socket.io.js"></script>
 </head>
 <body>
-    <div class="default"><canvas width="20" height="20" class="default-inside" id="screen"></canvas></div>
-    <a href="#" target="_blank" style="display: none;" class="enter-game">Conectar controle</a>
-    <img id="qr-code">
+    <div class="default">
+        <canvas width="20" height="20" class="default-inside" id="screen"></canvas>
+    </div>
+    <div class="qr-code">
+        <img id="qr-code" class="qrCodeImg open"></img>
+        <input type="checkbox" class="openQrCode"></input>
+    </div>
     <script src="../js/game-screen.js"></script>
 </body>
 </html>

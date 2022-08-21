@@ -1,4 +1,4 @@
-const enterGameBtn = document.getElementsByClassName('enter-game')[0]
+const qrCode = document.getElementById('qr-code')
 
 const socket = io('http://localhost:3003')
 
@@ -17,11 +17,13 @@ socket.on('roomExists', (params) => {
 socket.on('createdRoom', (params) => {
     const roomId = params.roomId
 
-    enterGameBtn.style.display = 'block'
-    enterGameBtn.href = `http://localhost:5500/client/html/game-control.html?roomId=${roomId}`
-    const qrCode = document.getElementById('qr-code')
-
     qrCode.setAttribute('src', `https://chart.googleapis.com/chart?chs=510x510&cht=qr&chco=414141,c1c1c1&chf=bg,s,c1c1c1&chl=http://localhost:5500/html/game-control.html?roomId=${roomId}`)
+    qrCode.setAttribute('title', 'Clique para entrar')
+    qrCode.style.cursor = 'pointer'
+
+    qrCode.addEventListener('click', () => {
+        window.open(`http://localhost:5500/client/html/game-control.html?roomId=${roomId}`, '_blank')
+    })
 })
 
 socket.on('playerEntered', (params) => {
@@ -52,3 +54,7 @@ function renderScreen() {
 document.addEventListener('keydown', (e) => {
     socket.emit('keyPress', {key: e.key})
 })
+
+function showQr() {
+    
+}
