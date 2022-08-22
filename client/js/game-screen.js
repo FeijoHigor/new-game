@@ -6,6 +6,21 @@ const createRoom = () => Math.floor(Math.random() * 9999999999)
 
 var game = {players: []}
 
+const label = document.getElementById('openQrCodeLabel')
+label.addEventListener('click', () => {
+    const checkButton = document.getElementById('openQrCode')
+    console.log(checkButton.checked)
+    if(checkButton.checked) {
+        label.innerText = 'Fechar qr-code'
+        label.title = 'Fechar qr-code'
+    }else {
+        label.innerText = 'Abir qr-code'
+        label.title = 'Abrir qr-code'
+        
+    }
+})
+
+
 socket.on('connect', () => {
     socket.emit('createRoom', {roomId: createRoom()})
 })
@@ -27,7 +42,10 @@ socket.on('createdRoom', (params) => {
 })
 
 socket.on('playerEntered', (params) => {
-    qrCode.style.display = 'none'
+    const checkButton = document.getElementById('openQrCode')
+    checkButton.checked = true
+    label.innerText = 'Abir qr-code'
+    label.title = 'Abrir qr-code'
 })
 
 socket.on('state', (params) => {
@@ -40,7 +58,7 @@ const context = screen.getContext('2d')
 renderScreen()
 
 function renderScreen() {
-    context.fillStyle = '#D9D9D9'
+    context.fillStyle = '#c1c1c1'
     context.fillRect(0, 0, 20, 20)
     game['players'].forEach((e, i) => {
         context.fillStyle = `rgba(${e.color},0.6)`
@@ -54,10 +72,3 @@ function renderScreen() {
 document.addEventListener('keydown', (e) => {
     socket.emit('keyPress', {key: e.key})
 })
-
-function showQr() {
-    const label = document.getElementById('openQrCodeLabel')
-    label.addEventListener('click', () => {
-        
-    })
-}

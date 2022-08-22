@@ -76,6 +76,7 @@ io.on('connection', (socket) => {
             socket.to(params.room).emit('startGame', {room: params.room})
         }else if(socketType == 'joinRoom') {
             socket.join(params.roomId)
+            socket.to(params.roomId).emit('playerEntered', {room: params.roomId})
         }else if(socketType == 'leaveScreen') {
             console.log('room is disconnected')
             socket.to(params.room).emit('leavePlayers', {room: params.room})

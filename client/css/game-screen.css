@@ -35,7 +35,7 @@ img#qr-code:hover{
     left: 50%;
     top: 4%;
     transform: translate(-50%, 0);
-    width: 20rem;
+    width: 22rem;
     height: 4rem;
     display: flex;
 }
