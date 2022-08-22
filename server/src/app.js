@@ -69,17 +69,18 @@ io.on('connection', (socket) => {
         const params = socketParams
 
         if(socketType == 'updateState') {
-            console.log('test', params.state)
             socket.to(params.room).emit('state', {state: params.state})
         }else if(socketType == 'startGame') {
-            console.log(params.room, ' started the game')
             socket.to(params.room).emit('startGame', {room: params.room})
         }else if(socketType == 'joinRoom') {
             socket.join(params.roomId)
-            socket.to(params.roomId).emit('playerEntered', {room: params.roomId})
+            if(params.socketType == 'player') {
+                socket.to(params.roomId).emit('playerEntered', {room: params.roomId})
+            }
         }else if(socketType == 'leaveScreen') {
-            console.log('room is disconnected')
             socket.to(params.room).emit('leavePlayers', {room: params.room})
+        }else if(socketType == 'createRoom') {
+            socket.emit('createdRoom', {roomId: params.roomId})
         }
     }
 
@@ -102,21 +103,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('createRoom', (params) => {
-        const roomId = params.roomId
-        const roomExists = checkRoom(roomId)
-
-        if(roomExists != -1) {
-            socket.emit('roomExists', {roomId})
-        }else {
-            const room = {id: roomId, gameScreen: socket.id, players: []}
-            game.state['rooms'].push(room)
-
-            socket.join(roomId)
-            socket.emit('createdRoom', {roomId})
-
-            console.log('Nova sala foi criada: ', roomId)
-            console.log('Esperando jogadores')
-        }
+        game.createRoom({ socket, callSoocket, })
     })
 
     socket.on('enterRoom', (params) => {

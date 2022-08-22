@@ -4,6 +4,17 @@ function game(params) {
         rooms: []
     }
 
+    const checkRoom = (id) => {
+        var index = -1
+        state['rooms'].forEach((e, i) => {
+            if(e.id == id) {
+                index = {e, i}
+            }
+        })
+
+        return index
+    }
+
     function checkStart(playerArray) {
         var playersReady = 0
         playerArray.forEach((e, i) => {
@@ -90,7 +101,7 @@ function game(params) {
 
             state['rooms'][room.i]['players'].push(newPlayer)
 
-            callSoocket('joinRoom', {roomId: room.e.id})
+            callSoocket('joinRoom', {roomId: room.e.id, socketType: 'player'})
             callSoocket('updateState', {state: state['rooms'][room.i], room: room.e.id})
             console.log(`Jogador conectado`)
         }else {
@@ -115,11 +126,32 @@ function game(params) {
         }
     }
 
+    function createRoom(params) {
+        const socket = params.socket
+        const callSoocket = params.callSoocket
+
+        const createRoomId = () => Math.floor(Math.random() * 9999999999)
+
+        const roomId = createRoomId()
+        const roomExists = checkRoom(roomId)
+
+        if(roomExists != -1) {
+            createRoom(params)
+        }else {
+            const room = {id: roomId, gameScreen: socket.id, players: []}
+            state['rooms'].push(room)
+
+            callSoocket('joinRoom', {roomId: roomId, socketType: 'room'})
+            callSoocket('createRoom', {roomId})
+        }
+    }
+
     return {
         state,
         btnPressed,
         enterPlayer,
-        leavePlayer
+        leavePlayer,
+        createRoom,
     }
 
 }

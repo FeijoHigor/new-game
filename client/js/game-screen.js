@@ -2,8 +2,6 @@ const qrCode = document.getElementById('qr-code')
 
 const socket = io('http://localhost:3003')
 
-const createRoom = () => Math.floor(Math.random() * 9999999999)
-
 var game = {players: []}
 
 const label = document.getElementById('openQrCodeLabel')
@@ -22,14 +20,11 @@ label.addEventListener('click', () => {
 
 
 socket.on('connect', () => {
-    socket.emit('createRoom', {roomId: createRoom()})
-})
-
-socket.on('roomExists', (params) => {
-    socket.emit('createRoom', {roomId: createRoom()})
+    socket.emit('createRoom', {})
 })
 
 socket.on('createdRoom', (params) => {
+    console.log('heloo', params)
     const roomId = params.roomId
 
     qrCode.setAttribute('src', `https://chart.googleapis.com/chart?chs=510x510&cht=qr&chco=414141,c1c1c1&chf=bg,s,c1c1c1&chl=http://localhost:5501/html/game-control.html?roomId=${roomId}`)
