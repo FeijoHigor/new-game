@@ -13,10 +13,11 @@
     <div class="default">
         <canvas width="20" height="20" class="default-inside" id="screen"></canvas>
     </div>
-    <div class="qr-code">
-        <img id="qr-code" class="qrCodeImg open"></img>
-        <input type="checkbox" class="openQrCode"></input>
+    <input id="openQrCode" type="checkbox" class="openQrCode" checked />    
+    <div id="openQr">
+        <label for="openQrCode" id="openQrCodeLabel">Abrir qr-code</label>
     </div>
+    <img id="qr-code" class="qrCodeImg open"></img>
     <script src="../js/game-screen.js"></script>
 </body>
 </html>
