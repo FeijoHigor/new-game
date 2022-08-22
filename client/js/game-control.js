@@ -1,4 +1,4 @@
-const socket = io('http://localhost:3003')
+const socket = io('https://higor-game.herokuapp.com/')
 
 socket.on('connect', () => {
     console.log(socket.id)

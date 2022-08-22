@@ -1,6 +1,6 @@
 const qrCode = document.getElementById('qr-code')
 
-const socket = io('http://localhost:3003')
+const socket = io('https://higor-game.herokuapp.com/')
 
 var game = {players: []}
 
