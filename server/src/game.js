@@ -19,7 +19,7 @@ function game(params) {
     }
 
     function btnPressed(params) {
-        const {socketId, room, btnPressed} = params
+        const {room, btnPressed} = params
         const roomState = state['rooms'][room.iRoom]
         const callSoocket = params.callSoocket
 

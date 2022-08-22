@@ -129,18 +129,6 @@ io.on('connection', (socket) => {
         const room = getRoomId(socket.id)
         
         game.leavePlayer({socketId: socket.id, callSoocket, room})
-
-
-        /*if(room == -1) {
-            console.log('Socket não é nem jogador nem tela')
-        }else if(room.type == 'control') {
-            console.log(`O jogador ${socket.id} saiu da sala ${room.id}.`)
-            game.state['rooms'][room.iRoom]['players'].splice(room.iPlayer, 1)
-        }else if(room.type == 'screen') {
-            console.log(`A sala ${room.room} foi desconctada.`)
-            game.state['rooms'].splice(room.iRoom, 1)
-        }*/
-
     })
 })
 

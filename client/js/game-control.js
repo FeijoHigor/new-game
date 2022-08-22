@@ -21,7 +21,7 @@ btn.forEach((e, i) => {
 })
 
 socket.on('leavePlayers', (params) => {
-    document.location.href = 'http://localhost:5500/client/html/game-screen.html'
+    document.location.href = 'http://localhost:5501/client/html/game-screen.html'
 })
 
 document.addEventListener('keydown', (e) => {
