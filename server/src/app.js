@@ -31,17 +31,6 @@ io.on('connection', (socket) => {
         return index
     }
 
-    const checkPlayer = (id, array) => {
-        var index = -1
-        array.forEach((e, i) => {
-            if(e.id == id) {
-                index = {e, i}
-            }
-        })
-
-        return index
-    }
-
     const getRoomId = (socketId) => {
         var room = -1
 
@@ -64,7 +53,7 @@ io.on('connection', (socket) => {
         return room
     }
 
-    function callSoocket(socketType, socketParams) {
+    function callSocket(socketType, socketParams) {
 
         const params = socketParams
 
@@ -81,6 +70,9 @@ io.on('connection', (socket) => {
             socket.to(params.room).emit('leavePlayers', {room: params.room})
         }else if(socketType == 'createRoom') {
             socket.emit('createdRoom', {roomId: params.roomId})
+        }else if(socketType == 'playerStatus') {
+            console.log('uii', params)
+            socket.emit('playerStatus', {playerStatus: params.playerStatus})
         }
     }
 
@@ -99,23 +91,24 @@ io.on('connection', (socket) => {
         const btnPressed = params.btn
         const room = getRoomId(socket.id)
 
-        game.btnPressed({ socket: socket.id, room, btnPressed, callSoocket: callSoocket })
+        game.btnPressed({ socket: socket.id, room, btnPressed, callSocket: callSocket })
     })
 
     socket.on('createRoom', (params) => {
-        game.createRoom({ socket, callSoocket, })
+        game.createRoom({ socket, callSocket, })
     })
 
     socket.on('enterRoom', (params) => {
         const room = checkRoom(params.roomId)
 
-        game.enterPlayer({socketId: socket.id, room, callSoocket})
+        game.enterPlayer({socketId: socket.id, room, callSocket})
+        game.playerStatus({socketId: socket.id, room, callSocket})
     })
 
     socket.on('disconnect', () => {
         const room = getRoomId(socket.id)
         
-        game.leavePlayer({socketId: socket.id, callSoocket, room})
+        game.leavePlayer({socketId: socket.id, callSocket, room})
     })
 })
 

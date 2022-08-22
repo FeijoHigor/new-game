@@ -13,6 +13,15 @@ socket.on('roomNotFound', (params) => {
 
 const btn = Array.from(document.getElementsByClassName('btn'))
 
+socket.on('playerStatus', (params) => {
+    console.log(document.getElementsByTagName('body'))
+    document.getElementsByClassName('control')[0].setAttribute('style', `border: 3rem solid rgb(${params.playerStatus.e.color});`)
+
+    Array.from(document.getElementsByClassName('default')).forEach((e, i) => {
+        e.setAttribute('style', `background-color: rgb(${params.playerStatus.e.color});`)
+    })
+})
+
 btn.forEach((e, i) => {
     e.addEventListener('click', () => {
         console.log(e)

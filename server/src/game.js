@@ -4,6 +4,17 @@ function game(params) {
         rooms: []
     }
 
+    const checkPlayer = (id, array) => {
+        var index = -1
+        array.forEach((e, i) => {
+            if(e.id == id) {
+                index = {e, i}
+            }
+        })
+
+        return index
+    }
+
     const checkRoom = (id) => {
         var index = -1
         state['rooms'].forEach((e, i) => {
@@ -32,7 +43,7 @@ function game(params) {
     function btnPressed(params) {
         const {room, btnPressed} = params
         const roomState = state['rooms'][room.iRoom]
-        const callSoocket = params.callSoocket
+        const callSocket = params.callSocket
 
         if(btnPressed.id == 'left') {
             if(roomState['players'][room.iPlayer].playerX != 0) {
@@ -61,7 +72,7 @@ function game(params) {
                             e.playerStatus = 'inGame'
                         })
                         console.log('iniciou jogo')
-                        callSoocket('startGame', { room })
+                        callSocket('startGame', { room })
                     }, 3000)
                 }
             }else if(btnPressed.checked == false) {
@@ -74,11 +85,11 @@ function game(params) {
             }
         }
 
-        callSoocket('updateState', {state: state['rooms'][room.iRoom], room: room.room})
+        callSocket('updateState', {state: state['rooms'][room.iRoom], room: room.room})
     }
 
     function enterPlayer(params) {
-        const callSoocket = params.callSoocket
+        const callSocket = params.callSocket
         const socketId = params.socketId
         const room = params.room
         console.log(room)
@@ -101,8 +112,8 @@ function game(params) {
 
             state['rooms'][room.i]['players'].push(newPlayer)
 
-            callSoocket('joinRoom', {roomId: room.e.id, socketType: 'player'})
-            callSoocket('updateState', {state: state['rooms'][room.i], room: room.e.id})
+            callSocket('joinRoom', {roomId: room.e.id, socketType: 'player'})
+            callSocket('updateState', {state: state['rooms'][room.i], room: room.e.id})
             console.log(`Jogador conectado`)
         }else {
             console.log('Sala não encontrada: ', room)
@@ -111,24 +122,24 @@ function game(params) {
 
     function leavePlayer(params) {
         
-        const { room, socketId, callSoocket } = params
+        const { room, socketId, callSocket } = params
 
         if(room == -1) {
             console.log('Socket não é nem jogador nem tela')
         }else if(room.type == 'control') {
             console.log(`O jogador ${socketId} saiu da sala ${room.room}.`)
             state['rooms'][room.iRoom]['players'].splice(room.iPlayer, 1)
-            callSoocket('updateState', {state: state['rooms'][room.iRoom], room: room.room})
+            callSocket('updateState', {state: state['rooms'][room.iRoom], room: room.room})
         }else if(room.type == 'screen') {
             console.log(`A sala ${room.room} foi desconctada.`)
             state['rooms'].splice(room.iRoom, 1)
-            callSoocket('leaveScreen', {room: room.room})
+            callSocket('leaveScreen', {room: room.room})
         }
     }
 
     function createRoom(params) {
         const socket = params.socket
-        const callSoocket = params.callSoocket
+        const callSocket = params.callSocket
 
         const createRoomId = () => Math.floor(Math.random() * 9999999999)
 
@@ -141,10 +152,24 @@ function game(params) {
             const room = {id: roomId, gameScreen: socket.id, players: []}
             state['rooms'].push(room)
 
-            callSoocket('joinRoom', {roomId: roomId, socketType: 'room'})
-            callSoocket('createRoom', {roomId})
+            callSocket('joinRoom', {roomId: roomId, socketType: 'room'})
+            callSocket('createRoom', {roomId})
         }
     }
+
+    function playerStatus(params) {
+        const socketId = params.socketId
+        const room = params.room
+        const callSocket = params.callSocket
+
+        if(room != -1) {
+            const playerStatus = checkPlayer(socketId, state['rooms'][room.i]['players'])
+            callSocket('playerStatus', {playerStatus, roomId: room.e.id })
+        }
+
+    }
+
+
 
     return {
         state,
@@ -152,6 +177,7 @@ function game(params) {
         enterPlayer,
         leavePlayer,
         createRoom,
+        playerStatus
     }
 
 }
