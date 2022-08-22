@@ -27,12 +27,12 @@ socket.on('createdRoom', (params) => {
     console.log('heloo', params)
     const roomId = params.roomId
 
-    qrCode.setAttribute('src', `https://chart.googleapis.com/chart?chs=510x510&cht=qr&chco=414141,c1c1c1&chf=bg,s,c1c1c1&chl=http://localhost:5501/html/game-control.html?roomId=${roomId}`)
+    qrCode.setAttribute('src', `https://chart.googleapis.com/chart?chs=510x510&cht=qr&chco=414141,c1c1c1&chf=bg,s,c1c1c1&chl=https://higor-game.netlify.app/html/game-control.html?roomId=${roomId}`)
     qrCode.setAttribute('title', 'Clique para conectar controle.')
     qrCode.style.cursor = 'pointer'
 
     qrCode.addEventListener('click', () => {
-        window.open(`http://localhost:5501/client/html/game-control.html?roomId=${roomId}`, '_blank')
+        window.open(`https://higor-game.netlify.app/html/game-control.html?roomId=${roomId}`, '_blank')
     })
 })
 

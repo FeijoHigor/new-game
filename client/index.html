@@ -4,11 +4,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game</title>
+    <title>Game-screen</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/game-screen.css">
     <script src="http://localhost:3003/socket.io/socket.io.js"></script>
 </head>
 <body>
-    <h1>Game</h1>
-    <script src="./js/game.js"></script>
+    <div class="default">
+        <canvas width="20" height="20" class="default-inside" id="screen"></canvas>
+    </div>
+    <input id="openQrCode" type="checkbox" class="openQrCode" />    
+    <div id="openQr">
+        <label for="openQrCode" id="openQrCodeLabel" title="Fechar qr-code">Fechar qr-code</label>
+    </div>
+    <img id="qr-code" class="qrCodeImg open"></img>
+    <script src="./js/game-screen.js"></script>
 </body>
 </html>

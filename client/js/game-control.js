@@ -30,7 +30,7 @@ btn.forEach((e, i) => {
 })
 
 socket.on('leavePlayers', (params) => {
-    document.location.href = 'http://localhost:5501/client/html/game-screen.html'
+    document.location.href = 'https://higor-game.netlify.app'
 })
 
 document.addEventListener('keydown', (e) => {
