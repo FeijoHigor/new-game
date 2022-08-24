@@ -12,8 +12,6 @@ const app = express()
 
 const server = http.createServer(app)
 
-app.use(express.static('public'))
-
 const io = socketio(server, {
     cors: {
         origin: '*'
