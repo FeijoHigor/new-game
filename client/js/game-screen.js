@@ -1,7 +1,14 @@
+const pageHost = window.location.hostname == '127.0.0.1' || window.location.hostname == 'localhost' ? 'development' : 'production'
+
+const SERVER_PORT = pageHost == 'development' ? 'http://localhost:3003' : 'https://higor-game.herokuapp.com'
+const CLIENT_PORT = window.location.origin
+const socketSrc = document.getElementById('socket-js')
+
+socketSrc.setAttribute('src', `${SERVER_PORT}/socket.io/socket.io.js`)
+
 const qrCode = document.getElementById('qr-code')
 
-const socket = io('https://higor-game.herokuapp.com/')
-
+const socket = io(`${SERVER_PORT}/`)
 var game = {players: []}
 
 const label = document.getElementById('openQrCodeLabel')
@@ -24,15 +31,14 @@ socket.on('connect', () => {
 })
 
 socket.on('createdRoom', (params) => {
-    console.log('heloo', params)
     const roomId = params.roomId
 
-    qrCode.setAttribute('src', `https://chart.googleapis.com/chart?chs=510x510&cht=qr&chco=414141,c1c1c1&chf=bg,s,c1c1c1&chl=https://higor-game.netlify.app/html/game-control.html?roomId=${roomId}`)
+    qrCode.setAttribute('src', `https://chart.googleapis.com/chart?chs=510x510&cht=qr&chco=414141,c1c1c1&chf=bg,s,c1c1c1&chl=${CLIENT_PORT}/html/game-control.html?roomId=${roomId}`)
     qrCode.setAttribute('title', 'Clique para conectar controle.')
     qrCode.style.cursor = 'pointer'
 
     qrCode.addEventListener('click', () => {
-        window.open(`https://higor-game.netlify.app/html/game-control.html?roomId=${roomId}`, '_blank')
+        window.open(`${CLIENT_PORT}/client/html/game-control.html?roomId=${roomId}`, '_blank')
     })
 })
 
