@@ -1,7 +1,7 @@
 const pageHost = window.location.hostname == '127.0.0.1' || window.location.hostname == 'localhost' ? 'development' : 'production'
 
 const SERVER_PORT = pageHost == 'development' ? 'http://localhost:3003' : 'https://higor-game.herokuapp.com'
-const CLIENT_PORT = window.location.origin
+const CLIENT_PORT = pageHost == 'development' ? `${window.location.origin}/client` : window.location.origin
 const socketSrc = document.getElementById('socket-js')
 
 socketSrc.setAttribute('src', `${SERVER_PORT}/socket.io/socket.io.js`)
@@ -38,7 +38,7 @@ socket.on('createdRoom', (params) => {
     qrCode.style.cursor = 'pointer'
 
     qrCode.addEventListener('click', () => {
-        window.open(`${CLIENT_PORT}/client/html/game-control.html?roomId=${roomId}`, '_blank')
+        window.open(`${CLIENT_PORT}/html/game-control.html?roomId=${roomId}`, '_blank')
     })
 })
 
