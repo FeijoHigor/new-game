@@ -1,7 +1,7 @@
 const pageHost = window.location.hostname == '127.0.0.1' || window.location.hostname == 'localhost' ? 'development' : 'production'
 
 const SERVER_PORT = pageHost == 'development' ? 'http://localhost:3003' : 'https://higor-game.herokuapp.com'
-const CLIENT_PORT = window.location.origin
+const CLIENT_PORT = pageHost == 'development' ? `${window.location.origin}/client` : window.location.origin
 const socketSrc = document.getElementById('socket-js')
 
 socketSrc.setAttribute('src', `${SERVER_PORT}/socket.io/socket.io.js`)
@@ -38,7 +38,7 @@ btn.forEach((e, i) => {
 })
 
 socket.on('leavePlayers', (params) => {
-    document.location.href = `${CLIENT_PORT}/client/`
+    document.location.href = `${CLIENT_PORT}/`
 })
 
 document.addEventListener('keydown', (e) => {
