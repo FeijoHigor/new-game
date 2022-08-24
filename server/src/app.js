@@ -3,6 +3,7 @@ const express = require('express')
 
 const dotenv = require('dotenv').config()
 
+
 const gameFc = require('./game')
 
 const http = require('http')
@@ -10,6 +11,8 @@ const http = require('http')
 const app = express()
 
 const server = http.createServer(app)
+
+app.use(express.static('public'))
 
 const io = socketio(server, {
     cors: {
