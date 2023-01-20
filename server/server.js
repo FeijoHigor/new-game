@@ -1,16 +1,15 @@
 const socketio = require('socket.io')
-const express = require('express')
-
-const dotenv = require('dotenv').config()
-
-
-const gameFc = require('./game')
-
 const http = require('http')
+const express = require('express')
+const gameFc = require('./src/game')
+
+require('dotenv').config()
 
 const app = express()
 
 const server = http.createServer(app)
+
+app.use('/static', express.static('public'))
 
 const io = socketio(server, {
     cors: {
@@ -116,13 +115,15 @@ io.on('connection', (socket) => {
 })
 
 app.get('/', (req, res) => {
-    res.send('hello')
+    res.sendFile(__dirname + '/public/index.html')
 })
 
-const PORT = process.env.PORT || 3004
+app.get('/control', (req, res) => {
+    res.sendFile(__dirname + '/public/html/game-control.html')
+})
+
+const PORT = process.env.PORT || 3000
 
 server.listen(PORT, () => {
     console.log('Server is running')
 })
-
-module.exports = {}

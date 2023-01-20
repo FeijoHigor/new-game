@@ -1,12 +1,10 @@
-const pageHost = window.location.hostname == '127.0.0.1' || window.location.hostname == 'localhost' ? 'development' : 'production'
+const PORT = window.location.origin
 
-const SERVER_PORT = pageHost == 'development' ? 'http://localhost:3003' : 'https://higor-game.herokuapp.com'
-const CLIENT_PORT = pageHost == 'development' ? `${window.location.origin}/client` : window.location.origin
 const socketSrc = document.getElementById('socket-js')
 
-socketSrc.setAttribute('src', `${SERVER_PORT}/socket.io/socket.io.js`)
+socketSrc.setAttribute('src', `${PORT}/socket.io/socket.io.js`)
 
-const socket = io(`${SERVER_PORT}/`)
+const socket = io(`${PORT}/`)
 
 socket.on('connect', () => {
     console.log(socket.id)
@@ -32,13 +30,12 @@ socket.on('playerStatus', (params) => {
 
 btn.forEach((e, i) => {
     e.addEventListener('click', () => {
-        console.log(e)
         socket.emit('btnPressed', {btn: {id: e.id, checked: e.checked}})
     })
 })
 
 socket.on('leavePlayers', (params) => {
-    document.location.href = `${CLIENT_PORT}/`
+    document.location.href = `${PORT}/`
 })
 
 document.addEventListener('keydown', (e) => {
