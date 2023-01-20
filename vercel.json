@@ -4,13 +4,13 @@
     "public": true,
     "builds": [
       {
-        "src": "server.js",
-        "use": "@now/node"
+        "src": "./server.js",
+        "use": "@now/node-server"
       }
     ],
-    "routes": [
+    "routes": [{"handle": "filesystem"},
         {
-            "src": "server.js",
+            "src": "/.*",
             "dest": "server.js"
         }
     ]
