@@ -11,11 +11,7 @@ const server = http.createServer(app)
 
 app.use('/static', express.static('public'))
 
-const io = socketio(server, {
-    cors: {
-        origin: '*'
-    },
-})
+const io = socketio(server)
 
 const game = gameFc.game()
 console.log(game.state)
@@ -127,5 +123,3 @@ const PORT = process.env.PORT || 3000
 server.listen(PORT, () => {
     console.log('Server is running on PORT: ' + PORT)
 })
-
-module.exports = app
