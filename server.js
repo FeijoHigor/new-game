@@ -89,9 +89,10 @@ io.on('connection', (socket) => {
         const btnPressed = params.btn
         const room = getRoomId(socket.id)
 
-        game.btnPressed({ socket: socket.id, room, btnPressed, callSocket: callSocket })
-    })
+            game.btnPressed({ socket: socket.id, room, btnPressed, callSocket: callSocket })
 
+    })
+ 
     socket.on('createRoom', (params) => {
         game.createRoom({ socket, callSocket, })
     })

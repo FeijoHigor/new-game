@@ -24,13 +24,23 @@ socket.on('playerStatus', (params) => {
     document.getElementsByClassName('control')[0].setAttribute('style', `border: 3rem solid rgb(${params.playerStatus.e.color});`)
 
     Array.from(document.getElementsByClassName('default')).forEach((e, i) => {
-        e.setAttribute('style', `background-color: rgb(${params.playerStatus.e.color});`)
+        e.setAttribute('style', `border: 1rem solid rgb(${params.playerStatus.e.color});`)
     })
 })
 
 btn.forEach((e, i) => {
-    e.addEventListener('click', () => {
-        socket.emit('btnPressed', {btn: {id: e.id, checked: e.checked}})
+    e.addEventListener('mousedown', () => {
+        walk = setInterval(() => socket.emit('btnPressed', {btn: {id: e.id, checked: e.checked}}), 100)
+    })
+    e.addEventListener('mouseup', () => {
+        if(walk) {
+          clearInterval(walk)  
+        }
+    })
+    e.addEventListener('mouseout', () => {
+        if(walk) {
+            clearInterval(walk)  
+          }
     })
 })
 

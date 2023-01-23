@@ -3,6 +3,10 @@
     box-shadow: 0px 0px 19px 5px rgba(0, 0, 0, 0.40);
 }
 
+.default {
+    background-color: #c1c1c1;
+}
+
 .control {
     display: flex;
     width: 100%;

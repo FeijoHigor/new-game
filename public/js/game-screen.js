@@ -16,7 +16,7 @@ label.addEventListener('click', () => {
         label.innerText = 'Fechar qr-code'
         label.title = 'Fechar qr-code'
     }else {
-        label.innerText = 'Abir qr-code'
+        label.innerText = 'Abrir qr-code'
         label.title = 'Abrir qr-code'
     }
 })
@@ -41,7 +41,7 @@ socket.on('createdRoom', (params) => {
 socket.on('playerEntered', (params) => {
     const checkButton = document.getElementById('openQrCode')
     checkButton.checked = true
-    label.innerText = 'Abir qr-code'
+    label.innerText = 'Abrir qr-code'
     label.title = 'Abrir qr-code'
 })
 
