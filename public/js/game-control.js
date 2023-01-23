@@ -32,6 +32,14 @@ btn.forEach((e, i) => {
     e.addEventListener('mousedown', () => {
         walk = setInterval(() => socket.emit('btnPressed', {btn: {id: e.id, checked: e.checked}}), 100)
     })
+    e.addEventListener('touchstart', () => {
+        walk = setInterval(() => socket.emit('btnPressed', {btn: {id: e.id, checked: e.checked}}), 100)
+    })
+    e.addEventListener('touchend', () => {
+        if(walk) {
+          clearInterval(walk)  
+        }
+    })
     e.addEventListener('mouseup', () => {
         if(walk) {
           clearInterval(walk)  
