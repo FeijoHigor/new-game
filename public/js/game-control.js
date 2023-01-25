@@ -29,11 +29,36 @@ socket.on('playerStatus', (params) => {
 })
 
 btn.forEach((e, i) => {
-    e.addEventListener('mousedown', () => {
-        walk = setInterval(() => socket.emit('btnPressed', {btn: {id: e.id, checked: e.checked}}), 100)
+    const walkEvents = ['mousedown', 'touchstart']
+    const stopEvents = ['touchend', 'mouseup', 'mouseout']
+    var lastEvent = 'stop'
+
+    walkEvents.forEach((event) => {
+        e.addEventListener(event, () => {
+            if(lastEvent == 'stop') {
+                lastEvent = 'walk'
+                console.log('walk', event)
+                walkInterval = setInterval(() => socket.emit('btnPressed', {btn: {id: e.id, checked: e.checked}}), 100)
+            }
+        })
     })
-    e.addEventListener('touchstart', () => {
-        walk = setInterval(() => socket.emit('btnPressed', {btn: {id: e.id, checked: e.checked}}), 100)
+
+    stopEvents.forEach((event) => {
+        e.addEventListener(event, () => {
+            if(lastEvent == 'walk') {
+                lastEvent = 'stop'
+                console.log('stop', event)
+                clearInterval(walkInterval)
+            }
+        })
+    })
+
+    /* e.addEventListener('mousedown', () => {
+        walk = setInterval(() => (
+            socket.emit('btnPressed', {btn: {id: e.id, checked: e.checked}}),
+            console.log(e)
+        ),
+        100)
     })
     e.addEventListener('touchend', () => {
         if(walk) {
@@ -42,14 +67,16 @@ btn.forEach((e, i) => {
     })
     e.addEventListener('mouseup', () => {
         if(walk) {
+            console.log('touch', walk)
           clearInterval(walk)  
         }
     })
     e.addEventListener('mouseout', () => {
         if(walk) {
+            console.log('out', walk)
             clearInterval(walk)  
           }
-    })
+    }) */
 })
 
 socket.on('leavePlayers', (params) => {
