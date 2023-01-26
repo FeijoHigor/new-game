@@ -63,11 +63,11 @@ function renderScreen(screen) {
     const context = screen.getContext('2d')
 
     context.fillStyle = '#c1c1c1'
-    context.fillRect(0, 0, 60, 60)
+    context.fillRect(0, 0, 40, 40)
 
     game['players'].forEach((e, i) => {
         context.fillStyle = `rgba(${e.color},0.6)`
-        context.fillRect(e.playerX, e.playerY, e.points, e.points)
+        context.fillRect(e.playerX, e.playerY, e.points + 1, e.points + 1)
     });
 
     game['fruits'].forEach((e, i) => {

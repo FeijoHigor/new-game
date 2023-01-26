@@ -1,7 +1,8 @@
 function game(params) {
     
     const state = {
-        rooms: []
+        rooms: [],
+        mapSize: 40
     }
 
     const checkPlayer = (id, array) => {
@@ -54,11 +55,11 @@ function game(params) {
                 state['rooms'][room.iRoom]['players'][room.iPlayer].playerY--
             } 
         }else if(btnPressed.id == 'right') {
-            if(roomState['players'][room.iPlayer].playerX != 18) {
+            if(roomState['players'][room.iPlayer].playerX != state['mapSize'] - roomState['players'][room.iPlayer].points - 1) {
                 state['rooms'][room.iRoom]['players'][room.iPlayer].playerX++
             }
         }else if(btnPressed.id == 'down') {
-            if(roomState['players'][room.iPlayer].playerY != 18) {
+            if(roomState['players'][room.iPlayer].playerY != state['mapSize'] - roomState['players'][room.iPlayer].points - 1) {
                 state['rooms'][room.iRoom]['players'][room.iPlayer].playerY++
             }
         }else if(btnPressed.id == 'ready') {
@@ -108,7 +109,7 @@ function game(params) {
                 playerStatus: 'waiting',
                 playerX: playerPosition(),
                 playerY: playerPosition(),
-                points: 1,
+                points: 0,
                 color: newColor
             }
 
@@ -126,7 +127,7 @@ function game(params) {
         const {callSocket, room} = params
 
         const fruitPosition = () => {
-            return parseInt(Math.random() * 18)
+            return parseInt(Math.random() * state['mapSize'])
         }
 
         const fruitId = () => {
@@ -140,9 +141,20 @@ function game(params) {
             fruitY: fruitPosition() 
         }
 
-        state['rooms'][room.iRoom]['fruits'].push(newFruit)
+        const roomPlayers = checkRoom(room.room).e.players
+
+        roomPlayers.forEach((e, i) => {
+            if(newFruit.fruitX >= e.playerX && newFruit.fruitX <= e.playerX + e.points 
+                && newFruit.fruitY >= e.playerY && newFruit.fruitY <= e.playerY + e.points) {
+                    console.log('fruta dentro')
+                    addFruit({callSocket, room})
+                    return
+            }else {
+                state['rooms'][room.iRoom]['fruits'].push(newFruit)
+                callSocket('fruitStatus', {state: state['rooms'][room.iRoom], room: room.room})
+            }
+        })
         
-        callSocket('fruitStatus', {state: state['rooms'][room.iRoom], room: room.room})
     }
 
     function removeFruit(params) {
@@ -159,11 +171,14 @@ function game(params) {
         const player = checkPlayer(playerId, state['rooms'][room.iRoom]['players'])
 
         state['rooms'][room.iRoom]['fruits'].forEach((e, i) => {
-            if(player.e.playerX == e.fruitX && player.e.playerY == e.fruitY) {
+            if(e.fruitX >= player.e.playerX && e.fruitX <= player.e.playerX + player.e.points 
+                && e.fruitY >= player.e.playerY && e.fruitY <= player.e.playerY + player.e.points ) {
                 console.log('fruit collision')
-                state['rooms'][room.iRoom]['players'][player.i].points++
                 addFruit({callSocket, room})
                 removeFruit({fruit: {e, i}, room, callSocket})
+                if(player.e.points < 20) {
+                    state['rooms'][room.iRoom]['players'][player.i].points++
+                }
             }
         })
     }
@@ -216,8 +231,6 @@ function game(params) {
         }
 
     }
-
-
 
     return {
         state,
