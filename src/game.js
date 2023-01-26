@@ -85,6 +85,7 @@ function game(params) {
             }
         }
 
+        checkFruitCollision({playerId: state['rooms'][room.iRoom]['players'][room.iPlayer].id, room, callSocket})
         callSocket('updateState', {state: state['rooms'][room.iRoom], room: room.room})
     }
 
@@ -107,6 +108,7 @@ function game(params) {
                 playerStatus: 'waiting',
                 playerX: playerPosition(),
                 playerY: playerPosition(),
+                points: 1,
                 color: newColor
             }
 
@@ -128,7 +130,7 @@ function game(params) {
         }
 
         const fruitId = () => {
-            return parseInt(Math.random() * 99999)
+            return parseInt(Math.random() * 99999999)
         }
 
         const newFruit = {
@@ -140,13 +142,30 @@ function game(params) {
 
         state['rooms'][room.iRoom]['fruits'].push(newFruit)
         
-        callSocket('newFruit', {state: state['rooms'][room.iRoom], room: room.room})
+        callSocket('fruitStatus', {state: state['rooms'][room.iRoom], room: room.room})
     }
 
-    function test(params) {
-        const { callSocket, room } = params
+    function removeFruit(params) {
+        const {room, callSocket, fruit} = params
 
-        callSocket('updateState', {state: state['rooms'][room.iRoom], room: room.room})
+        state['rooms'][room.iRoom]['fruits'].splice(fruit.i, 1)
+
+        callSocket('fruitStatus', {state: state['rooms'][room.iRoom], room: room.room})
+    }
+
+    function checkFruitCollision(params) {
+        const {playerId, room, callSocket} = params
+
+        const player = checkPlayer(playerId, state['rooms'][room.iRoom]['players'])
+
+        state['rooms'][room.iRoom]['fruits'].forEach((e, i) => {
+            if(player.e.playerX == e.fruitX && player.e.playerY == e.fruitY) {
+                console.log('fruit collision')
+                state['rooms'][room.iRoom]['players'][player.i].points++
+                addFruit({callSocket, room})
+                removeFruit({fruit: {e, i}, room, callSocket})
+            }
+        })
     }
 
     function leavePlayer(params) {
@@ -208,7 +227,6 @@ function game(params) {
         createRoom,
         playerStatus,
         addFruit,
-        test
     }
 
 }

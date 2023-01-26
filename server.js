@@ -72,7 +72,7 @@ io.on('connection', (socket) => {
         }else if(socketType == 'playerStatus') {
             console.log('uii', params)
             socket.emit('playerStatus', {playerStatus: params.playerStatus})
-        }else if(socketType == 'newFruit') {
+        }else if(socketType == 'fruitStatus') {
             socket.emit('state', {state: params.state})
         }
     }
@@ -87,9 +87,6 @@ io.on('connection', (socket) => {
         }else if(params.key == 'f') {
             const room = getRoomId(socket.id)
             game.addFruit({room, callSocket: callSocket})
-        }else if(params.key == 't') {
-            const room = getRoomId(socket.id)
-            game.test({room, callSocket})
         }
     })
 
