@@ -56,6 +56,7 @@ io.on('connection', (socket) => {
         const params = socketParams
 
         if(socketType == 'updateState') {
+            console.log('updateState', (params))
             socket.to(params.room).emit('state', {state: params.state})
         }else if(socketType == 'startGame') {
             socket.to(params.room).emit('startGame', {room: params.room})
@@ -71,6 +72,8 @@ io.on('connection', (socket) => {
         }else if(socketType == 'playerStatus') {
             console.log('uii', params)
             socket.emit('playerStatus', {playerStatus: params.playerStatus})
+        }else if(socketType == 'newFruit') {
+            socket.emit('state', {state: params.state})
         }
     }
 
@@ -81,6 +84,12 @@ io.on('connection', (socket) => {
         }else if (params.key == 'p') {
             const roomId = Array.from(socket.rooms)[1]
             console.log(checkRoom(roomId)['e']['players'])
+        }else if(params.key == 'f') {
+            const room = getRoomId(socket.id)
+            game.addFruit({room, callSocket: callSocket})
+        }else if(params.key == 't') {
+            const room = getRoomId(socket.id)
+            game.test({room, callSocket})
         }
     })
 
@@ -89,8 +98,7 @@ io.on('connection', (socket) => {
         const btnPressed = params.btn
         const room = getRoomId(socket.id)
 
-            game.btnPressed({ socket: socket.id, room, btnPressed, callSocket: callSocket })
-
+        game.btnPressed({ socket: socket.id, room, btnPressed, callSocket: callSocket })
     })
  
     socket.on('createRoom', (params) => {

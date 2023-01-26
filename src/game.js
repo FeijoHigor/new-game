@@ -92,7 +92,7 @@ function game(params) {
         const callSocket = params.callSocket
         const socketId = params.socketId
         const room = params.room
-        console.log(room)
+        console.log('player room display', room)
         
         if(room != -1) {
             const color = () => [parseInt(Math.random() * 255), parseInt(Math.random() * 255), parseInt(Math.random() * 255)].toString()
@@ -118,6 +118,35 @@ function game(params) {
         }else {
             console.log('Sala não encontrada: ', room)
         }
+    }
+
+    function addFruit(params) {
+        const {callSocket, room} = params
+
+        const fruitPosition = () => {
+            return parseInt(Math.random() * 18)
+        }
+
+        const fruitId = () => {
+            return parseInt(Math.random() * 99999)
+        }
+
+        const newFruit = {
+            id: fruitId(),
+            color: '#ebd444',
+            fruitX: fruitPosition(),
+            fruitY: fruitPosition() 
+        }
+
+        state['rooms'][room.iRoom]['fruits'].push(newFruit)
+        
+        callSocket('newFruit', {state: state['rooms'][room.iRoom], room: room.room})
+    }
+
+    function test(params) {
+        const { callSocket, room } = params
+
+        callSocket('updateState', {state: state['rooms'][room.iRoom], room: room.room})
     }
 
     function leavePlayer(params) {
@@ -149,7 +178,7 @@ function game(params) {
         if(roomExists != -1) {
             createRoom(params)
         }else {
-            const room = {id: roomId, gameScreen: socket.id, players: []}
+            const room = {id: roomId, gameScreen: socket.id, players: [], fruits: []}
             state['rooms'].push(room)
 
             callSocket('joinRoom', {roomId: roomId, socketType: 'room'})
@@ -177,7 +206,9 @@ function game(params) {
         enterPlayer,
         leavePlayer,
         createRoom,
-        playerStatus
+        playerStatus,
+        addFruit,
+        test
     }
 
 }

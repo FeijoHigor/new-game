@@ -52,37 +52,8 @@ btn.forEach((e, i) => {
             }
         })
     })
-
-    /* e.addEventListener('mousedown', () => {
-        walk = setInterval(() => (
-            socket.emit('btnPressed', {btn: {id: e.id, checked: e.checked}}),
-            console.log(e)
-        ),
-        100)
-    })
-    e.addEventListener('touchend', () => {
-        if(walk) {
-          clearInterval(walk)  
-        }
-    })
-    e.addEventListener('mouseup', () => {
-        if(walk) {
-            console.log('touch', walk)
-          clearInterval(walk)  
-        }
-    })
-    e.addEventListener('mouseout', () => {
-        if(walk) {
-            console.log('out', walk)
-            clearInterval(walk)  
-          }
-    }) */
 })
 
 socket.on('leavePlayers', (params) => {
     document.location.href = `${PORT}/`
-})
-
-document.addEventListener('keydown', (e) => {
-    socket.emit('keyPress', {key: e.key})
 })
