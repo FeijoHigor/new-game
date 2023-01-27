@@ -56,7 +56,6 @@ io.on('connection', (socket) => {
         const params = socketParams
 
         if(socketType == 'updateState') {
-            console.log('updateState', (params))
             socket.to(params.room).emit('state', {state: params.state})
         }else if(socketType == 'startGame') {
             socket.to(params.room).emit('startGame', {room: params.room})
@@ -86,7 +85,10 @@ io.on('connection', (socket) => {
             console.log(checkRoom(roomId)['e']['players'])
         }else if(params.key == 'f') {
             const room = getRoomId(socket.id)
-            game.addFruit({room, callSocket: callSocket})
+            game.addFruit({room, callSocket: callSocket, fruitType: 'good'})
+        }else if(params.key == 'b') {
+            const room = getRoomId(socket.id)
+            game.addFruit({room, callSocket: callSocket, fruitType: 'bad'})
         }
     })
 

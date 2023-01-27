@@ -87,6 +87,7 @@ function game(params) {
         }
 
         checkFruitCollision({playerId: state['rooms'][room.iRoom]['players'][room.iPlayer].id, room, callSocket})
+        checkPlayerCollision({playerId: state['rooms'][room.iRoom]['players'][room.iPlayer].id, room, callSocket})
         callSocket('updateState', {state: state['rooms'][room.iRoom], room: room.room})
     }
 
@@ -124,7 +125,7 @@ function game(params) {
     }
 
     function addFruit(params) {
-        const {callSocket, room} = params
+        const {callSocket, room, fruitType} = params
 
         const fruitPosition = () => {
             return parseInt(Math.random() * state['mapSize'])
@@ -136,25 +137,33 @@ function game(params) {
 
         const newFruit = {
             id: fruitId(),
-            color: '#ebd444',
+            color: fruitType == 'good' ? '235, 212, 68' : '171, 36, 255',
             fruitX: fruitPosition(),
-            fruitY: fruitPosition() 
+            fruitY: fruitPosition(),
+            fruitType
         }
 
         const roomPlayers = checkRoom(room.room).e.players
 
-        roomPlayers.forEach((e, i) => {
-            if(newFruit.fruitX >= e.playerX && newFruit.fruitX <= e.playerX + e.points 
-                && newFruit.fruitY >= e.playerY && newFruit.fruitY <= e.playerY + e.points) {
-                    console.log('fruta dentro')
-                    addFruit({callSocket, room})
-                    return
+        const checkCollision = () => {
+            var isFruitInside = 0
+            roomPlayers.forEach((e, i) => {
+                if(newFruit.fruitX >= e.playerX && newFruit.fruitX <= e.playerX + e.points 
+                    && newFruit.fruitY >= e.playerY && newFruit.fruitY <= e.playerY + e.points) {
+                        isFruitInside++
+                }
+            })
+
+            if(isFruitInside > 0) {
+                console.log('fruta dentro')
+                addFruit({callSocket, room, fruitType})
             }else {
                 state['rooms'][room.iRoom]['fruits'].push(newFruit)
                 callSocket('fruitStatus', {state: state['rooms'][room.iRoom], room: room.room})
             }
-        })
-        
+        }
+
+        checkCollision()
     }
 
     function removeFruit(params) {
@@ -174,10 +183,29 @@ function game(params) {
             if(e.fruitX >= player.e.playerX && e.fruitX <= player.e.playerX + player.e.points 
                 && e.fruitY >= player.e.playerY && e.fruitY <= player.e.playerY + player.e.points ) {
                 console.log('fruit collision')
-                addFruit({callSocket, room})
-                removeFruit({fruit: {e, i}, room, callSocket})
-                if(player.e.points < 20) {
-                    state['rooms'][room.iRoom]['players'][player.i].points++
+                if(e.fruitType == 'good') {
+                    removeFruit({fruit: {e, i}, room, callSocket})
+                    addFruit({callSocket, room, fruitType: 'good'})
+                    player.e.points < 18 ? state['rooms'][room.iRoom]['players'][player.i].points++ : false
+                }else if(player.e.points > 0 && e.fruitType == 'bad') {
+                    removeFruit({fruit: {e, i}, room, callSocket})
+                    setInterval(() => addFruit({callSocket, room, fruitType: 'bad'}), 10000)
+                    state['rooms'][room.iRoom]['players'][player.i].points = Math.floor(player.e.points - player.e.points / 2)
+                }
+            }
+        })
+    }
+
+    function checkPlayerCollision(params) {
+        const {playerId, room, callSocket} = params
+
+        const player = checkPlayer(playerId, state['rooms'][room.iRoom]['players'])
+
+        state['rooms'][room.iRoom]['players'].forEach((e, i) => {
+            if(e.id != playerId) {
+                if(e.playerX + e.points >= player.e.playerX && e.playerX <= player.e.playerX + player.e.points 
+                    && e.playerY >= player.e.playerY && e.playerY <= player.e.playerY + player.e.points ) {
+                    console.log('player collision')
                 }
             }
         })

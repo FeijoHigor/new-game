@@ -71,7 +71,7 @@ function renderScreen(screen) {
     });
 
     game['fruits'].forEach((e, i) => {
-        context.fillStyle = `${e.color}`
+        context.fillStyle = `rgba(${e.color}, 0.7)`
         context.fillRect(e.fruitX, e.fruitY, 1, 1)
     });
 
