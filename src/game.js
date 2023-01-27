@@ -187,9 +187,9 @@ function game(params) {
                     removeFruit({fruit: {e, i}, room, callSocket})
                     addFruit({callSocket, room, fruitType: 'good'})
                     player.e.points < 18 ? state['rooms'][room.iRoom]['players'][player.i].points++ : false
+                    checkPlayerPosition({playerId, room})
                 }else if(player.e.points > 0 && e.fruitType == 'bad') {
                     removeFruit({fruit: {e, i}, room, callSocket})
-                    setInterval(() => addFruit({callSocket, room, fruitType: 'bad'}), 10000)
                     state['rooms'][room.iRoom]['players'][player.i].points = Math.floor(player.e.points - player.e.points / 2)
                 }
             }
@@ -209,6 +209,22 @@ function game(params) {
                 }
             }
         })
+    }
+
+    function checkPlayerPosition(params) {
+        const {room, playerId} = params
+
+        const roomPlayers = checkRoom(room.room).e.players
+        const player = checkPlayer(playerId, roomPlayers)
+
+        const xPosition = state['mapSize'] - (player.e.playerX + player.e.points)
+        const yPosition = state['mapSize'] - (player.e.playerY + player.e.points)
+        if(xPosition < 1) {
+            state['rooms'][room.iRoom]['players'][player.i].playerX = player.e.playerX + (xPosition - 1)
+        }
+        if(yPosition < 1) {
+            state['rooms'][room.iRoom]['players'][player.i].playerY = player.e.playerY + (yPosition - 1)
+        }
     }
 
     function leavePlayer(params) {
