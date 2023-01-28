@@ -203,9 +203,11 @@ function game(params) {
 
         state['rooms'][room.iRoom]['players'].forEach((e, i) => {
             if(e.id != playerId) {
-                if(e.playerX + e.points >= player.e.playerX && e.playerX <= player.e.playerX + player.e.points 
-                    && e.playerY >= player.e.playerY && e.playerY <= player.e.playerY + player.e.points ) {
-                    console.log('player collision')
+                if(player.e.points != e.points) {
+                    if(player.e.playerX + player.e.points >= e.playerX + e.points && player.e.playerX <= e.playerX + e.points && player.e.playerX <= e.playerX
+                        && player.e.playerY + player.e.points >= e.playerY + e.points && player.e.playerY <= e.playerY + e.points && player.e.playerY <= e.playerY) {
+                        console.log('dentro')
+                    }
                 }
             }
         })
