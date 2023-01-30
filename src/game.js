@@ -133,42 +133,47 @@ function game(params) {
     function addFruit(params) {
         const {callSocket, room, fruitType} = params
 
-        const fruitPosition = () => {
-            return parseInt(Math.random() * state['mapSize'])
-        }
-
-        const fruitId = () => {
-            return parseInt(Math.random() * 99999999)
-        }
-
-        const newFruit = {
-            id: fruitId(),
-            color: fruitType == 'good' ? '235, 212, 68' : '171, 36, 255',
-            fruitX: fruitPosition(),
-            fruitY: fruitPosition(),
-            fruitType
-        }
-
-        const roomPlayers = checkRoom(room.room).e.players
-
-        const checkCollision = () => {
-            var isFruitInside = 0
-            roomPlayers.forEach((e, i) => {
-                if(newFruit.fruitX >= e.playerX && newFruit.fruitX <= e.playerX + e.points 
-                    && newFruit.fruitY >= e.playerY && newFruit.fruitY <= e.playerY + e.points) {
-                        isFruitInside++
-                }
-            })
-
-            if(isFruitInside > 0) {
-                addFruit({callSocket, room, fruitType})
-            }else {
-                state['rooms'][room.iRoom]['fruits'].push(newFruit)
-                callSocket('fruitStatus', {state: state['rooms'][room.iRoom], room: room.room})
+        if(checkRoom(room.room) != -1) {
+            const fruitPosition = () => {
+                return parseInt(Math.random() * state['mapSize'])
             }
-        }
 
-        checkCollision()
+            const fruitId = () => {
+                return parseInt(Math.random() * 99999999)
+            }
+
+            const newFruit = {
+                id: fruitId(),
+                color: fruitType == 'good' ? '235, 212, 68' : '171, 36, 255',
+                fruitX: fruitPosition(),
+                fruitY: fruitPosition(),
+                fruitType
+            }
+
+            const roomPlayers = checkRoom(room.room).e.players
+
+            const checkCollision = () => {
+                var isFruitInside = 0
+                roomPlayers.forEach((e, i) => {
+                    if(newFruit.fruitX >= e.playerX && newFruit.fruitX <= e.playerX + e.points 
+                        && newFruit.fruitY >= e.playerY && newFruit.fruitY <= e.playerY + e.points) {
+                            isFruitInside++
+                    }
+                })
+
+                if(isFruitInside > 0) {
+                    addFruit({callSocket, room, fruitType})
+                }else {
+                    state['rooms'][room.iRoom]['fruits'].push(newFruit)
+                    callSocket('fruitStatus', {state: state['rooms'][room.iRoom], room: room.room})
+                }
+            }
+
+            checkCollision()
+        }else {
+            console.log('Sala não encontrada: ', checkRoom(room.room))
+            clearInterval(generateFruit)
+        }
     }
 
     function removeFruit(params) {

@@ -87,7 +87,7 @@ io.on('connection', (socket) => {
             game.addFruit({room, callSocket: callSocket, fruitType: 'good'})
         }else if(params.key == 'b') {
             const room = getRoomId(socket.id)
-            setInterval(() => game.addFruit({callSocket, room, fruitType: 'bad'}), 10000)
+            generateFruit = setInterval(() => game.addFruit({callSocket, room, fruitType: 'bad'}), 10000)
         }
     })
 
