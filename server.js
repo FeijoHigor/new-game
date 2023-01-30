@@ -69,7 +69,6 @@ io.on('connection', (socket) => {
         }else if(socketType == 'createRoom') {
             socket.emit('createdRoom', {roomId: params.roomId})
         }else if(socketType == 'playerStatus') {
-            console.log('uii', params)
             socket.emit('playerStatus', {playerStatus: params.playerStatus})
         }else if(socketType == 'fruitStatus') {
             socket.emit('state', {state: params.state})

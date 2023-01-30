@@ -95,14 +95,13 @@ function game(params) {
         const callSocket = params.callSocket
         const socketId = params.socketId
         const room = params.room
-        console.log('player room display', room)
         
         if(room != -1) {
             const color = () => [parseInt(Math.random() * 255), parseInt(Math.random() * 255), parseInt(Math.random() * 255)].toString()
 
             const newColor = color()
             const playerPosition = () => {
-                return parseInt(Math.random() * 18)
+                return parseInt(Math.random() * state['mapSize'])
             }
 
             const newPlayer = {
@@ -114,11 +113,18 @@ function game(params) {
                 color: newColor
             }
 
-            state['rooms'][room.i]['players'].push(newPlayer)
-
-            callSocket('joinRoom', {roomId: room.e.id, socketType: 'player'})
-            callSocket('updateState', {state: state['rooms'][room.i], room: room.e.id})
-            console.log(`Jogador conectado`)
+            const checking = checkSpawnLocal({room, player: newPlayer})
+            if(checking.isInside === true) {
+                enterPlayer(params)
+                console.log('opa')
+                console.log(checking)
+            }else {
+                state['rooms'][room.i]['players'].push(newPlayer)
+    
+                callSocket('joinRoom', {roomId: room.e.id, socketType: 'player'})
+                callSocket('updateState', {state: state['rooms'][room.i], room: room.e.id})
+                console.log(`Jogador conectado`)
+            }
         }else {
             console.log('Sala não encontrada: ', room)
         }
@@ -155,7 +161,6 @@ function game(params) {
             })
 
             if(isFruitInside > 0) {
-                console.log('fruta dentro')
                 addFruit({callSocket, room, fruitType})
             }else {
                 state['rooms'][room.iRoom]['fruits'].push(newFruit)
@@ -174,6 +179,31 @@ function game(params) {
         callSocket('fruitStatus', {state: state['rooms'][room.iRoom], room: room.room})
     }
 
+    function checkSpawnLocal(params) {
+        const {room, player} = params
+
+        const roomPlayers = room.e.players
+
+        var isPlayerInside = 0
+        if(roomPlayers.length > 0) {
+            roomPlayers.forEach((e, i) => {
+                if(player.id != e.id) {
+                    if(player.playerX >= e.playerX && player.playerX <= e.playerX + e.points 
+                        && player.playerY >= e.playerY && player.playerY <= e.playerY + e.points) {
+                            isPlayerInside++
+                    }
+                }
+            })
+        }
+
+        if(isPlayerInside > 0) {
+            console.log('player dentro')
+            return {isInside: true}
+        }else {
+            return {isInside: false}
+        }
+    }
+
     function checkFruitCollision(params) {
         const {playerId, room, callSocket} = params
 
@@ -182,7 +212,6 @@ function game(params) {
         state['rooms'][room.iRoom]['fruits'].forEach((e, i) => {
             if(e.fruitX >= player.e.playerX && e.fruitX <= player.e.playerX + player.e.points 
                 && e.fruitY >= player.e.playerY && e.fruitY <= player.e.playerY + player.e.points ) {
-                console.log('fruit collision')
                 if(e.fruitType == 'good') {
                     removeFruit({fruit: {e, i}, room, callSocket})
                     addFruit({callSocket, room, fruitType: 'good'})
@@ -201,13 +230,42 @@ function game(params) {
 
         const player = checkPlayer(playerId, state['rooms'][room.iRoom]['players'])
 
+        const respawnPlayer = (params) => {
+            const { player, room } = params
+            const playerPosition = () => {
+                return parseInt(Math.random() * state['mapSize'])
+            }
+            player.e.points = 0
+            player.e.playerX = playerPosition()
+            player.e.playerY = playerPosition()
+            const checkingPosition = checkSpawnLocal({room: checkRoom(room.room), player: player.e})
+
+            if(checkingPosition.isInside === true) {
+                console.log('renasceu dentro')
+                respawnPlayer(params)
+            }else (
+                console.log('renasceu fora'),
+                state['rooms'][room.iRoom]['players'][player.i] = player.e
+            )
+            
+        }
+
         state['rooms'][room.iRoom]['players'].forEach((e, i) => {
             if(e.id != playerId) {
                 if(player.e.points != e.points) {
                     if(player.e.playerX + player.e.points >= e.playerX + e.points && player.e.playerX <= e.playerX + e.points && player.e.playerX <= e.playerX
                         && player.e.playerY + player.e.points >= e.playerY + e.points && player.e.playerY <= e.playerY + e.points && player.e.playerY <= e.playerY) {
-                        console.log('dentro')
-                    }
+                        console.log('ganhou')
+                        state['rooms'][room.iRoom]['players'][player.i].points = player.e.points + 2
+                        checkPlayerPosition({room, playerId: player.e.id})
+                        respawnPlayer({room, player: {e, i}})
+                    }else if(e.playerX + e.points >= player.e.playerX + player.e.points && e.playerX <= player.e.playerX + player.e.points && e.playerX <= player.e.playerX 
+                        && e.playerY + e.points >= player.e.playerY + player.e.points && e.playerY <= player.e.playerY + player.e.points && e.playerY <= player.e.playerY) {
+                            console.log('perdeu')
+                            state['rooms'][room.iRoom]['players'][i].points = e.points + 2
+                            checkPlayerPosition({room, playerId: e.id})
+                            respawnPlayer({room, player})
+                        }
                 }
             }
         })
