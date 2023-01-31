@@ -47,7 +47,6 @@ socket.on('playerEntered', (params) => {
 
 socket.on('state', (params) => {
     game = params.state
-    console.log(game)
 })
 
 

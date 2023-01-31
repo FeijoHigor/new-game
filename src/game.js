@@ -63,7 +63,7 @@ function game(params) {
                 state['rooms'][room.iRoom]['players'][room.iPlayer].playerY++
             }
         }else if(btnPressed.id == 'ready') {
-            if(btnPressed.checked == false && state['rooms'][room.iRoom].gameStatus != 'inGame') {
+            if(btnPressed.checked == true && state['rooms'][room.iRoom].gameStatus != 'inGame') {
                 state['rooms'][room.iRoom]['players'][room.iPlayer].playerStatus = 'ready'
                 const canStart = checkStart(state['rooms'][room.iRoom]['players'])
                 if(canStart) {
@@ -84,7 +84,7 @@ function game(params) {
                         callSocket('startGame', { room })
                     }, 3000)
                 }
-            }else if(btnPressed.checked == true) {
+            }else if(btnPressed.checked == false) {
                 if(state['rooms'][room.iRoom].gameStatus != 'inGame') {
                     callSocket('countStatus', { room, running: false })
                     const stopTimer = () => {
@@ -243,7 +243,7 @@ function game(params) {
                 && e.fruitY >= player.e.playerY && e.fruitY <= player.e.playerY + player.e.points ) {
                 if(e.fruitType == 'good') {
                     removeFruit({fruit: {e, i}, room, callSocket})
-                    addFruit({callSocket, room, fruitType: 'good'})
+                    //addFruit({callSocket, room, fruitType: 'good'})
                     player.e.points < 14 ? state['rooms'][room.iRoom]['players'][player.i].points++ : false
                     checkPlayerPosition({playerId, room})
                     checkFruitCollision(params)

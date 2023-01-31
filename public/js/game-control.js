@@ -7,7 +7,6 @@ socketSrc.setAttribute('src', `${PORT}/socket.io/socket.io.js`)
 const socket = io(`${PORT}/`)
 
 socket.on('connect', () => {
-    console.log(socket.id)
     const roomId = window.location.search.replace('?roomId=', '')
     console.log(roomId)
     socket.emit('enterRoom', {roomId})
@@ -22,6 +21,7 @@ socket.on('roomNotFound', (params) => {
 const btn = Array.from(document.getElementsByClassName('btn'))
 
 socket.on('startGame', (params) => {
+    console.log('iniciou')
     const readyBtn = document.getElementsByClassName('ready')[0]
     readyBtn.remove()
 })
@@ -39,24 +39,37 @@ socket.on('countStatus', (params) => {
             countDiv.innerHTML = count
             count = count - 1
             if(count == -1) {
-                clearInterval(countInterval)
-                Array.from(document.getElementsByClassName('counting'))[0].remove()
+                try{
+                    clearInterval(countInterval)
+                    Array.from(document.getElementsByClassName('counting'))[0].remove()
+                }catch{
+                    console.log('erro ao parar o timer')
+                }
             }
         }
     }
     if(params.running == false) {
-        clearInterval(countInterval)
-        Array.from(document.getElementsByClassName('counting'))[0].remove()
+        try{
+            clearInterval(countInterval)
+            Array.from(document.getElementsByClassName('counting'))[0].remove()
+        }catch{
+            console.log('erro ao parar o timer')
+        }
     }
 })
 
 socket.on('playerStatus', (params) => {
-    console.log(document.getElementsByTagName('body'))
     document.getElementsByClassName('control')[0].setAttribute('style', `border: 3rem solid rgb(${params.playerStatus.e.color});`)
 
     Array.from(document.getElementsByClassName('default')).forEach((e, i) => {
         e.setAttribute('style', `border: 1rem solid rgb(${params.playerStatus.e.color});`)
     })
+})
+
+const readyBtn = document.getElementById('ready')
+
+readyBtn.addEventListener('click', () => {
+    socket.emit('btnPressed', {btn: {id: readyBtn.id, checked: readyBtn.checked}})
 })
 
 btn.forEach((e, i) => {
@@ -68,7 +81,7 @@ btn.forEach((e, i) => {
         e.addEventListener(event, () => {
             if(lastEvent != 'walk') {
                 lastEvent = 'walk'
-                walkInterval = setInterval(() => socket.emit('btnPressed', {btn: {id: e.id, checked: e.checked}}), 100)
+                walkInterval = setInterval(() => socket.emit('btnPressed', {btn: {id: e.id}}), 100)
             }
         })
     })
