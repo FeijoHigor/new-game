@@ -75,6 +75,12 @@ function game(params) {
                             e.playerStatus = 'inGame'
                         })
                         console.log('iniciou jogo')
+                        addGoodFruit = setInterval(() => {
+                            addFruit({callSocket, room, fruitType: 'good'})
+                        }, 5000);
+                        addBadFruit = setInterval(() => {
+                            addFruit({callSocket, room, fruitType: 'bad'})
+                        }, 15000);
                         callSocket('startGame', { room })
                     }, 3000)
                 }
@@ -82,7 +88,7 @@ function game(params) {
                 if(state['rooms'][room.iRoom].gameStatus != 'inGame') {
                     callSocket('countStatus', { room, running: false })
                     const stopTimer = () => {
-                        clearTimeout(startTimer)
+                        try{clearTimeout(startTimer)}catch{console.log('startTimer error')}
                         console.log('parou o contador')
                     }
                     stopTimer()
@@ -185,7 +191,12 @@ function game(params) {
             checkCollision()
         }else {
             console.log('Sala não encontrada: ', checkRoom(room.room))
-            clearInterval(generateFruit)
+            try{
+                clearInterval(addBadFruit)
+                clearInterval(addGoodFruit)
+            }catch{
+                console.log('no fruit')
+            } 
         }
     }
 

@@ -71,7 +71,7 @@ io.on('connection', (socket) => {
         }else if(socketType == 'playerStatus') {
             socket.emit('playerStatus', {playerStatus: params.playerStatus})
         }else if(socketType == 'fruitStatus') {
-            socket.emit('state', {state: params.state})
+            socket.to(params.room).emit('state', {state: params.state})
         }else if(socketType == 'countStatus') {
             socket.emit('countStatus', {room: params.room, running: params.running})
         }
