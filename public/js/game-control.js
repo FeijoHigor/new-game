@@ -27,9 +27,9 @@ socket.on('startGame', (params) => {
 })
 
 socket.on('countStatus', (params) => {
+    const countDiv = document.createElement('div')
+    countDiv.setAttribute('class', 'counting')
     if(params.running == true) {
-        const countDiv = document.createElement('div')
-        countDiv.setAttribute('class', 'counting')
         document.getElementsByClassName('control')[0].appendChild(countDiv)
         countInterval = setInterval(() => updateCount() , 1000)
         var count = 3
@@ -42,6 +42,11 @@ socket.on('countStatus', (params) => {
                 clearInterval(countInterval)
             }
         }
+    }
+    if(params.running == false) {
+        clearInterval(countInterval)
+        document.getElementsByClassName('counting')[0].style.display = 'none'
+        //countDiv.style.display = 'none'
     }
 })
 
