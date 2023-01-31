@@ -23,7 +23,7 @@ const btn = Array.from(document.getElementsByClassName('btn'))
 
 socket.on('startGame', (params) => {
     const readyBtn = document.getElementsByClassName('ready')[0]
-    setTimeout(() => readyBtn.style.display = 'none', 1000)
+    readyBtn.remove()
 })
 
 socket.on('countStatus', (params) => {
@@ -31,22 +31,22 @@ socket.on('countStatus', (params) => {
     countDiv.setAttribute('class', 'counting')
     if(params.running == true) {
         document.getElementsByClassName('control')[0].appendChild(countDiv)
+        countDiv.innerHTML = '3'
         countInterval = setInterval(() => updateCount() , 1000)
-        var count = 3
+        var count = 2
         const updateCount = () => {
             console.log(count)
             countDiv.innerHTML = count
             count = count - 1
             if(count == -1) {
-                countDiv.style.display = 'none'
                 clearInterval(countInterval)
+                Array.from(document.getElementsByClassName('counting'))[0].remove()
             }
         }
     }
     if(params.running == false) {
         clearInterval(countInterval)
-        document.getElementsByClassName('counting')[0].style.display = 'none'
-        //countDiv.style.display = 'none'
+        Array.from(document.getElementsByClassName('counting'))[0].remove()
     }
 })
 

@@ -68,8 +68,12 @@ function game(params) {
                 const canStart = checkStart(state['rooms'][room.iRoom]['players'])
                 if(canStart) {
                     callSocket('countStatus', { room, running: true })
+                    console.log('iniciou a contagem')
                     startTimer = setTimeout(() => {
                         state['rooms'][room.iRoom].gameStatus = 'inGame'
+                        state['rooms'][room.iRoom]['players'].forEach((e, i) => {
+                            e.playerStatus = 'inGame'
+                        })
                         console.log('iniciou jogo')
                         callSocket('startGame', { room })
                     }, 3000)
@@ -83,6 +87,7 @@ function game(params) {
                     }
                     stopTimer()
                     state['rooms'][room.iRoom].gameStatus = 'waiting'
+                    state['rooms'][room.iRoom]['players'][room.iPlayer].playerStatus = 'waiting'
                 }else {
                     console.log('já está no jogo')
                 }
