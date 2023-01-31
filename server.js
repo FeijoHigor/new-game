@@ -58,7 +58,7 @@ io.on('connection', (socket) => {
         if(socketType == 'updateState') {
             socket.to(params.room).emit('state', {state: params.state})
         }else if(socketType == 'startGame') {
-            socket.to(params.room).emit('startGame', {room: params.room})
+            socket.emit('startGame', {room: params.room})
         }else if(socketType == 'joinRoom') {
             socket.join(params.roomId)
             if(params.socketType == 'player') {
@@ -72,6 +72,8 @@ io.on('connection', (socket) => {
             socket.emit('playerStatus', {playerStatus: params.playerStatus})
         }else if(socketType == 'fruitStatus') {
             socket.emit('state', {state: params.state})
+        }else if(socketType == 'countStatus') {
+            socket.emit('countStatus', {room: params.room, running: params.running})
         }
     }
 

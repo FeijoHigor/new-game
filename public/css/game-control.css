@@ -9,8 +9,8 @@
 
 .control {
     display: flex;
-    width: 100%;
-    height: 100%;
+    width: calc(100% - 3rem);
+    height: calc(100% - 3rem);
 }
 
 .arrows {
@@ -22,6 +22,30 @@
     justify-content: space-between;
     align-items: center;
     margin: auto;
+}
+
+@media(max-height: 520px) {
+    .arrows {
+        height: 25rem;
+        width: 25rem;
+    }
+
+    .default {
+        height: 8rem;
+        width: 8rem;
+    }
+}
+
+@media(max-width: 520px) {
+    .arrows {
+        height: 50%;
+        width: 25rem;
+    }
+
+    .default {
+        height: 8rem;
+        width: 8rem;
+    }
 }
 
 .vertical-btns {
@@ -50,6 +74,21 @@
     justify-content: center;
 }
 
-.ready {
-    display: none;
+@media(orientation: portrait) {
+    .control {
+        flex-direction: column;
+    }
+    .shot {
+        width: 100%;
+        height: 50%;
+    }
+}
+
+.counting {
+    font-size: 30rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #c1c1c1;
 }

@@ -63,26 +63,29 @@ function game(params) {
                 state['rooms'][room.iRoom]['players'][room.iPlayer].playerY++
             }
         }else if(btnPressed.id == 'ready') {
-            if(btnPressed.checked == true) {
+            if(btnPressed.checked == false && state['rooms'][room.iRoom].gameStatus != 'inGame') {
                 state['rooms'][room.iRoom]['players'][room.iPlayer].playerStatus = 'ready'
                 const canStart = checkStart(state['rooms'][room.iRoom]['players'])
                 if(canStart) {
-                    console.log('iniciando contagem')
+                    callSocket('countStatus', { room, running: true })
                     startTimer = setTimeout(() => {
-                        state['rooms'][room.iRoom]['players'].forEach((e, i) => {
-                            e.playerStatus = 'inGame'
-                        })
+                        state['rooms'][room.iRoom].gameStatus = 'inGame'
                         console.log('iniciou jogo')
                         callSocket('startGame', { room })
                     }, 3000)
                 }
-            }else if(btnPressed.checked == false) {
-                const stopTimer = () => {
-                    clearTimeout(startTimer)
-                    console.log('stoped the timer')
+            }else if(btnPressed.checked == true) {
+                if(state['rooms'][room.iRoom].gameStatus != 'inGame') {
+                    callSocket('countStatus', { room, running: false })
+                    const stopTimer = () => {
+                        clearTimeout(startTimer)
+                        console.log('parou o contador')
+                    }
+                    stopTimer()
+                    state['rooms'][room.iRoom].gameStatus = 'waiting'
+                }else {
+                    console.log('já está no jogo')
                 }
-                stopTimer()
-                state['rooms'][room.iRoom]['players'][room.iPlayer].playerStatus = 'waiting'
             }
         }
 
@@ -96,34 +99,39 @@ function game(params) {
         const socketId = params.socketId
         const room = params.room
         
+        
         if(room != -1) {
-            const color = () => [parseInt(Math.random() * 255), parseInt(Math.random() * 255), parseInt(Math.random() * 255)].toString()
-
-            const newColor = color()
-            const playerPosition = () => {
-                return parseInt(Math.random() * state['mapSize'])
-            }
-
-            const newPlayer = {
-                id: socketId,
-                playerStatus: 'waiting',
-                playerX: playerPosition(),
-                playerY: playerPosition(),
-                points: 0,
-                color: newColor
-            }
-
-            const checking = checkSpawnLocal({room, player: newPlayer})
-            if(checking.isInside === true) {
-                enterPlayer(params)
-                console.log('opa')
-                console.log(checking)
+            if(room.e.gameStatus == 'inGame') {
+                console.log('Jogo já está rodando')
             }else {
-                state['rooms'][room.i]['players'].push(newPlayer)
-    
-                callSocket('joinRoom', {roomId: room.e.id, socketType: 'player'})
-                callSocket('updateState', {state: state['rooms'][room.i], room: room.e.id})
-                console.log(`Jogador conectado`)
+                const color = () => [parseInt(Math.random() * 255), parseInt(Math.random() * 255), parseInt(Math.random() * 255)].toString()
+
+                const newColor = color()
+                const playerPosition = () => {
+                    return parseInt(Math.random() * state['mapSize'])
+                }
+
+                const newPlayer = {
+                    id: socketId,
+                    playerStatus: 'waiting',
+                    playerX: playerPosition(),
+                    playerY: playerPosition(),
+                    points: 0,
+                    color: newColor
+                }
+
+                const checking = checkSpawnLocal({room, player: newPlayer})
+                if(checking.isInside === true) {
+                    enterPlayer(params)
+                    console.log('opa')
+                    console.log(checking)
+                }else {
+                    state['rooms'][room.i]['players'].push(newPlayer)
+        
+                    callSocket('joinRoom', {roomId: room.e.id, socketType: 'player'})
+                    callSocket('updateState', {state: state['rooms'][room.i], room: room.e.id})
+                    console.log(`Jogador conectado`)
+                }
             }
         }else {
             console.log('Sala não encontrada: ', room)
@@ -220,7 +228,7 @@ function game(params) {
                 if(e.fruitType == 'good') {
                     removeFruit({fruit: {e, i}, room, callSocket})
                     addFruit({callSocket, room, fruitType: 'good'})
-                    player.e.points < 18 ? state['rooms'][room.iRoom]['players'][player.i].points++ : false
+                    player.e.points < 14 ? state['rooms'][room.iRoom]['players'][player.i].points++ : false
                     checkPlayerPosition({playerId, room})
                     checkFruitCollision(params)
                 }else if(player.e.points > 0 && e.fruitType == 'bad') {
@@ -262,14 +270,14 @@ function game(params) {
                     if(player.e.playerX + player.e.points >= e.playerX + e.points && player.e.playerX <= e.playerX + e.points && player.e.playerX <= e.playerX
                         && player.e.playerY + player.e.points >= e.playerY + e.points && player.e.playerY <= e.playerY + e.points && player.e.playerY <= e.playerY) {
                         console.log('ganhou')
-                        state['rooms'][room.iRoom]['players'][player.i].points = player.e.points + 2
+                        player.e.points <= 12 ? state['rooms'][room.iRoom]['players'][player.i].points = player.e.points + 2 :
                         checkPlayerPosition({room, playerId: player.e.id})
                         respawnPlayer({room, player: {e, i}})
                         checkFruitCollision({room, playerId: player.e.id, callSocket})
                     }else if(e.playerX + e.points >= player.e.playerX + player.e.points && e.playerX <= player.e.playerX + player.e.points && e.playerX <= player.e.playerX 
                         && e.playerY + e.points >= player.e.playerY + player.e.points && e.playerY <= player.e.playerY + player.e.points && e.playerY <= player.e.playerY) {
                             console.log('perdeu')
-                            state['rooms'][room.iRoom]['players'][i].points = e.points + 2
+                            e.points <= 12 ? state['rooms'][room.iRoom]['players'][i].points = e.points + 2 :
                             checkPlayerPosition({room, playerId: e.id})
                             respawnPlayer({room, player})
                             checkFruitCollision({room, playerId: e.id, callSocket})
@@ -324,7 +332,7 @@ function game(params) {
         if(roomExists != -1) {
             createRoom(params)
         }else {
-            const room = {id: roomId, gameScreen: socket.id, players: [], fruits: []}
+            const room = {id: roomId, gameScreen: socket.id, players: [], fruits: [], gameStatus: 'waiting'}
             state['rooms'].push(room)
 
             callSocket('joinRoom', {roomId: roomId, socketType: 'room'})

@@ -15,9 +15,35 @@ socket.on('connect', () => {
 
 socket.on('roomNotFound', (params) => {
     console.log('Sala ', params.roomId, ' não encontrada')
+    window.href = PORT
 })
 
+
 const btn = Array.from(document.getElementsByClassName('btn'))
+
+socket.on('startGame', (params) => {
+    const readyBtn = document.getElementsByClassName('ready')[0]
+    setTimeout(() => readyBtn.style.display = 'none', 1000)
+})
+
+socket.on('countStatus', (params) => {
+    if(params.running == true) {
+        const countDiv = document.createElement('div')
+        countDiv.setAttribute('class', 'counting')
+        document.getElementsByClassName('control')[0].appendChild(countDiv)
+        countInterval = setInterval(() => updateCount() , 1000)
+        var count = 3
+        const updateCount = () => {
+            console.log(count)
+            countDiv.innerHTML = count
+            count = count - 1
+            if(count == -1) {
+                countDiv.style.display = 'none'
+                clearInterval(countInterval)
+            }
+        }
+    }
+})
 
 socket.on('playerStatus', (params) => {
     console.log(document.getElementsByTagName('body'))
@@ -35,9 +61,8 @@ btn.forEach((e, i) => {
 
     walkEvents.forEach((event) => {
         e.addEventListener(event, () => {
-            if(lastEvent == 'stop') {
+            if(lastEvent != 'walk') {
                 lastEvent = 'walk'
-                console.log('walk', event)
                 walkInterval = setInterval(() => socket.emit('btnPressed', {btn: {id: e.id, checked: e.checked}}), 100)
             }
         })
@@ -45,9 +70,8 @@ btn.forEach((e, i) => {
 
     stopEvents.forEach((event) => {
         e.addEventListener(event, () => {
-            if(lastEvent == 'walk') {
+            if(lastEvent != 'stop') {
                 lastEvent = 'stop'
-                console.log('stop', event)
                 clearInterval(walkInterval)
             }
         })
