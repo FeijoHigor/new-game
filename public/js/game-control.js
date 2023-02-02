@@ -59,11 +59,16 @@ socket.on('countStatus', (params) => {
 })
 
 socket.on('playerStatus', (params) => {
-    document.getElementsByClassName('control')[0].setAttribute('style', `border: 3rem solid rgb(${params.playerStatus.e.color});`)
-
-    Array.from(document.getElementsByClassName('default')).forEach((e, i) => {
-        e.setAttribute('style', `border: 1rem solid rgb(${params.playerStatus.e.color});`)
-    })
+    console.log('playerStatus')
+    if(params.preset == true) {
+        document.getElementsByClassName('control')[0].setAttribute('style', `border: 3rem solid rgb(${params.playerStatus.e.color});`)
+    
+        Array.from(document.getElementsByClassName('default')).forEach((e, i) => {
+            e.setAttribute('style', `border: 1rem solid rgb(${params.playerStatus.e.color});`)
+        })
+    }else if(params.preset == false) {
+        console.log('atualizar a barra de pontos')
+    }
 })
 
 const readyBtn = document.getElementById('ready')

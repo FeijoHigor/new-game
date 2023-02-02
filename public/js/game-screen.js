@@ -45,6 +45,37 @@ socket.on('playerEntered', (params) => {
     label.title = 'Abrir qr-code'
 })
 
+socket.on('countStatus', (params) => {
+    const countDiv = document.createElement('div')
+    countDiv.setAttribute('class', 'counting')
+    if(params.running == true) {
+        document.getElementsByTagName('body')[0].appendChild(countDiv)
+        countDiv.innerHTML = '3'
+        countInterval = setInterval(() => updateCount() , 1000)
+        var count = 2
+        const updateCount = () => {
+            countDiv.innerHTML = count
+            count = count - 1
+            if(count == -1) {
+                try{
+                    clearInterval(countInterval)
+                    Array.from(document.getElementsByClassName('counting'))[0].remove()
+                }catch{
+                    console.log('erro ao parar o timer')
+                }
+            }
+        }
+    }
+    if(params.running == false) {
+        try{
+            clearInterval(countInterval)
+            Array.from(document.getElementsByClassName('counting'))[0].remove()
+        }catch{
+            console.log('erro ao parar o timer')
+        }
+    }
+})
+
 socket.on('state', (params) => {
     game = params.state
 })

@@ -70,7 +70,7 @@ io.on('connection', (socket) => {
         }else if(socketType == 'createRoom') {
             socket.emit('createdRoom', {roomId: params.roomId})
         }else if(socketType == 'playerStatus') {
-            socket.emit('playerStatus', {playerStatus: params.playerStatus})
+            socket.emit('playerStatus', {playerStatus: params.playerStatus, preset: params.preset})
         }else if(socketType == 'fruitStatus') {
             socket.to(params.room).emit('state', {state: params.state})
         }else if(socketType == 'countStatus') {
@@ -111,7 +111,7 @@ io.on('connection', (socket) => {
         const room = checkRoom(params.roomId)
 
         game.enterPlayer({socketId: socket.id, room, callSocket})
-        game.playerStatus({socketId: socket.id, room, callSocket})
+        game.playerStatus({socketId: socket.id, room, callSocket, preset: true})
     })
 
     socket.on('disconnect', () => {

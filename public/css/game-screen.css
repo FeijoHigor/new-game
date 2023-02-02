@@ -70,3 +70,14 @@ input:checked ~ div#openQr label {
     color: #c1c1c1;
     border: 0.3rem solid #c1c1c1;
 }
+
+.counting {
+    font-size: 30rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #414141;
+    cursor: default;
+    pointer-events: none;
+}
