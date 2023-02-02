@@ -46,6 +46,7 @@ function game(params) {
         const roomState = state['rooms'][room.iRoom]
         const callSocket = params.callSocket
 
+        if(checkRoom(room.room) != -1) {
         if(btnPressed.id == 'left') {
             if(roomState['players'][room.iPlayer].playerX != 0) {
                 state['rooms'][room.iRoom]['players'][room.iPlayer].playerX--                
@@ -103,6 +104,7 @@ function game(params) {
         checkFruitCollision({playerId: state['rooms'][room.iRoom]['players'][room.iPlayer].id, room, callSocket})
         checkPlayerCollision({playerId: state['rooms'][room.iRoom]['players'][room.iPlayer].id, room, callSocket})
         callSocket('updateState', {state: state['rooms'][room.iRoom], room: room.room})
+        }
     }
 
     function enterPlayer(params) {
@@ -128,6 +130,7 @@ function game(params) {
                     playerX: playerPosition(),
                     playerY: playerPosition(),
                     points: 0,
+                    levelPoints: 0,
                     color: newColor
                 }
 
@@ -233,6 +236,22 @@ function game(params) {
         }
     }
 
+    function addPlayerPoint(params) {
+        const {playerId, roomId, callSocket, points} = params
+
+        const room = checkRoom(roomId)
+        const player = checkPlayer(playerId, room.e.players)
+
+        if(player.e.levelPoints + points >= player.e.points + 1) {
+            state['rooms'][room.i]['players'][player.i].levelPoints = (player.e.levelPoints + points) - (player.e.points + 1)
+            state['rooms'][room.i]['players'][player.i].points++
+        }else if(player.e.levelPoints + points < player.e.points + 1) {
+            state['rooms'][room.i]['players'][player.i].levelPoints = player.e.levelPoints + points
+        }
+        console.log('player points', player.e.points + 1)
+        console.log('player level points', player.e.levelPoints)
+    }
+
     function checkFruitCollision(params) {
         const {playerId, room, callSocket} = params
 
@@ -243,13 +262,14 @@ function game(params) {
                 && e.fruitY >= player.e.playerY && e.fruitY <= player.e.playerY + player.e.points ) {
                 if(e.fruitType == 'good') {
                     removeFruit({fruit: {e, i}, room, callSocket})
-                    //addFruit({callSocket, room, fruitType: 'good'})
-                    player.e.points < 14 ? state['rooms'][room.iRoom]['players'][player.i].points++ : false
+                    //player.e.points < 14 ? state['rooms'][room.iRoom]['players'][player.i].points++ : false
+                    addPlayerPoint({callSocket, roomId: room.room, points: 1, playerId})
                     checkPlayerPosition({playerId, room})
                     checkFruitCollision(params)
                 }else if(player.e.points > 0 && e.fruitType == 'bad') {
                     removeFruit({fruit: {e, i}, room, callSocket})
                     state['rooms'][room.iRoom]['players'][player.i].points = Math.floor(player.e.points - player.e.points / 2)
+                    state['rooms'][room.iRoom]['players'][player.i].levelPoints = 0
                 }
             }
         })
@@ -266,6 +286,7 @@ function game(params) {
                 return parseInt(Math.random() * state['mapSize'])
             }
             player.e.points = 0
+            player.e.levelPoints = 0
             player.e.playerX = playerPosition()
             player.e.playerY = playerPosition()
             const checkingPosition = checkSpawnLocal({room: checkRoom(room.room), player: player.e})
@@ -285,15 +306,13 @@ function game(params) {
                 if(player.e.points != e.points) {
                     if(player.e.playerX + player.e.points >= e.playerX + e.points && player.e.playerX <= e.playerX + e.points && player.e.playerX <= e.playerX
                         && player.e.playerY + player.e.points >= e.playerY + e.points && player.e.playerY <= e.playerY + e.points && player.e.playerY <= e.playerY) {
-                        console.log('ganhou')
-                        player.e.points <= 12 ? state['rooms'][room.iRoom]['players'][player.i].points = player.e.points + 2 :
+                        addPlayerPoint({callSocket, roomId: room.room, points: e.points + 1, playerId: player.e.id})
                         checkPlayerPosition({room, playerId: player.e.id})
                         respawnPlayer({room, player: {e, i}})
                         checkFruitCollision({room, playerId: player.e.id, callSocket})
                     }else if(e.playerX + e.points >= player.e.playerX + player.e.points && e.playerX <= player.e.playerX + player.e.points && e.playerX <= player.e.playerX 
                         && e.playerY + e.points >= player.e.playerY + player.e.points && e.playerY <= player.e.playerY + player.e.points && e.playerY <= player.e.playerY) {
-                            console.log('perdeu')
-                            e.points <= 12 ? state['rooms'][room.iRoom]['players'][i].points = e.points + 2 :
+                            addPlayerPoint({callSocket, roomId: room.room, points: player.e.points + 1, playerId: e.id})
                             checkPlayerPosition({room, playerId: e.id})
                             respawnPlayer({room, player})
                             checkFruitCollision({room, playerId: e.id, callSocket})
