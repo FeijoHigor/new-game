@@ -94,3 +94,27 @@
     cursor: default;
     pointer-events: none;
 }
+
+#levelStatus {
+    border: 2px solid #fff;
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    height: 3.5rem;
+    width: 30rem;
+}
+
+#levelStatus span {
+    position: absolute;
+    top: -150%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    font-size: 3rem;
+    color: #c1c1c1;
+}
+
+#levelStatus #perCentPoints {
+    height: 100%;
+    transition: 0.3s;
+}

@@ -60,15 +60,23 @@ socket.on('countStatus', (params) => {
 
 socket.on('playerStatus', (params) => {
     console.log('playerStatus')
+    const perCentPoints = document.getElementById('perCentPoints')
+    const levelStatus = document.getElementById('levelStatus')
     if(params.preset == true) {
         document.getElementsByClassName('control')[0].setAttribute('style', `border: 3rem solid rgb(${params.playerStatus.e.color});`)
     
+        perCentPoints.style.background = `rbg(${params.playerStatus.e.color})`
+        levelStatus.style.border = `rgb(${params.playerStatus.e.color}) solid 3px`
         Array.from(document.getElementsByClassName('default')).forEach((e, i) => {
             e.setAttribute('style', `border: 1rem solid rgb(${params.playerStatus.e.color});`)
         })
-    }else if(params.preset == false) {
-        console.log('atualizar a barra de pontos')
     }
+
+    console.log('atualizar a barra de pontos')
+    const writePoints = document.getElementById('writtenPoints')
+    writePoints.innerText = `${params.playerStatus.e.levelPoints}/${params.playerStatus.e.points + 1}`
+    perCentPoints.style.background = `rgb(${params.playerStatus.e.color})`
+    perCentPoints.style.width = (params.playerStatus.e.levelPoints/(params.playerStatus.e.points + 1)) * 100 + '%'
 })
 
 const readyBtn = document.getElementById('ready')
