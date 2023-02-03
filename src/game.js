@@ -246,7 +246,7 @@ function game(params) {
         }else if(player.e.levelPoints + points < player.e.points + 1) {
             state['rooms'][room.i]['players'][player.i].levelPoints = player.e.levelPoints + points
         }
-        playerStatus({socketId: player.e.id, room, callSocket, preset: false})
+        playerStatus({socketId: player.e.id, room, callSocket, preset: params.test})
     }
 
     function checkFruitCollision(params) {
@@ -268,7 +268,7 @@ function game(params) {
                     removeFruit({fruit: {e, i}, room, callSocket})
                     state['rooms'][room.iRoom]['players'][player.i].points = Math.floor(player.e.points - player.e.points / 2)
                     state['rooms'][room.iRoom]['players'][player.i].levelPoints = 0
-                    playerStatus({socketId: player.e.id, room: checkRoom(room.room), callSocket, preset: false})
+                    playerStatus({socketId: player.e.id, room: checkRoom(room.room), callSocket, preset: '2'})
                 }
             }
         })
@@ -294,7 +294,7 @@ function game(params) {
                 respawnPlayer(params)
             }else (
                 state['rooms'][room.iRoom]['players'][player.i] = player.e,
-                playerStatus({socketId: player.e.id, room: checkRoom(room.room), callSocket, preset: false})
+                playerStatus({socketId: player.e.id, room: checkRoom(room.room), callSocket, preset: '3'})
             )
             
         }
@@ -304,18 +304,19 @@ function game(params) {
                 if(player.e.points != e.points) {
                     if(player.e.playerX + player.e.points >= e.playerX + e.points && player.e.playerX <= e.playerX + e.points && player.e.playerX <= e.playerX
                         && player.e.playerY + player.e.points >= e.playerY + e.points && player.e.playerY <= e.playerY + e.points && player.e.playerY <= e.playerY) {
-                        addPlayerPoint({callSocket, roomId: room.room, points: e.points + 1, playerId: player.e.id})
+                        addPlayerPoint({callSocket, roomId: room.room, points: e.points + 1, playerId: player.e.id, test: 'test1'})
                         checkPlayerPosition({room, playerId: player.e.id})
                         respawnPlayer({room, player: {e, i}, callSocket})
                         checkFruitCollision({room, playerId: player.e.id, callSocket})
-                        playerStatus({socketId: player.e.id, room: checkRoom(room.room), callSocket, preset: false})
+                        playerStatus({socketId: player.e.id, room: checkRoom(room.room), callSocket, preset: '3'})
                     }else if(e.playerX + e.points >= player.e.playerX + player.e.points && e.playerX <= player.e.playerX + player.e.points && e.playerX <= player.e.playerX 
                         && e.playerY + e.points >= player.e.playerY + player.e.points && e.playerY <= player.e.playerY + player.e.points && e.playerY <= player.e.playerY) {
-                            addPlayerPoint({callSocket, roomId: room.room, points: player.e.points + 1, playerId: e.id})
+                            addPlayerPoint({callSocket, roomId: room.room, points: player.e.points + 1, playerId: e.id, test: 'test2'})
                             checkPlayerPosition({room, playerId: e.id})
                             respawnPlayer({room, player, callSocket})
                             checkFruitCollision({room, playerId: e.id, callSocket})
-                            //playerStatus({socketId: e.id, room: checkRoom(room.room), callSocket})
+                            console.log('pontuação', e)
+                            //playerStatus({socketId: e.id, room: checkRoom(room.room), callSocket, preset: '4'})
                         }
                 }
             }

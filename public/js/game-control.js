@@ -22,8 +22,8 @@ const btn = Array.from(document.getElementsByClassName('btn'))
 
 socket.on('startGame', (params) => {
     console.log('iniciou')
-    const readyBtn = document.getElementsByClassName('ready')[0]
-    readyBtn.remove()
+    const readyGroup = document.getElementsByClassName('readyGroup')[0]
+    readyGroup.remove()
 })
 
 socket.on('countStatus', (params) => {
@@ -59,7 +59,7 @@ socket.on('countStatus', (params) => {
 })
 
 socket.on('playerStatus', (params) => {
-    console.log('playerStatus')
+    console.log('playerStatus', params)
     const perCentPoints = document.getElementById('perCentPoints')
     const levelStatus = document.getElementById('levelStatus')
     if(params.preset == true) {

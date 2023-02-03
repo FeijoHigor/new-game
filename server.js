@@ -70,7 +70,12 @@ io.on('connection', (socket) => {
         }else if(socketType == 'createRoom') {
             socket.emit('createdRoom', {roomId: params.roomId})
         }else if(socketType == 'playerStatus') {
-            socket.emit('playerStatus', {playerStatus: params.playerStatus, preset: params.preset})
+            console.log(params.playerStatus.e.id)
+            if(params.playerStatus.e.id == socket.id) {
+                socket.emit('playerStatus', {playerStatus: params.playerStatus, preset: params.preset})
+            }else {
+                socket.to(params.playerStatus.e.id).emit('playerStatus', {playerStatus: params.playerStatus, preset: params.preset})
+            }
         }else if(socketType == 'fruitStatus') {
             socket.to(params.room).emit('state', {state: params.state})
         }else if(socketType == 'countStatus') {
