@@ -315,8 +315,6 @@ function game(params) {
                             checkPlayerPosition({room, playerId: e.id})
                             respawnPlayer({room, player, callSocket})
                             checkFruitCollision({room, playerId: e.id, callSocket})
-                            console.log('pontuação', e)
-                            //playerStatus({socketId: e.id, room: checkRoom(room.room), callSocket, preset: '4'})
                         }
                 }
             }
@@ -353,6 +351,9 @@ function game(params) {
             console.log(`A sala ${room.room} foi desconctada.`)
             state['rooms'].splice(room.iRoom, 1)
             callSocket('leaveScreen', {room: room.room})
+        }else if(room.type == 'viewer'){
+            console.log(`O espectador ${room.iViewer} foi desconctado.`)
+            state['rooms'][room.iRoom]['viewers'].splice(room.iViewer, 1)
         }
     }
 
@@ -368,7 +369,7 @@ function game(params) {
         if(roomExists != -1) {
             createRoom(params)
         }else {
-            const room = {id: roomId, gameScreen: socket.id, players: [], fruits: [], gameStatus: 'waiting'}
+            const room = {id: roomId, gameScreen: socket.id, players: [], fruits: [], gameStatus: 'waiting', viewers: []}
             state['rooms'].push(room)
 
             callSocket('joinRoom', {roomId: roomId, socketType: 'room'})
@@ -389,6 +390,24 @@ function game(params) {
 
     }
 
+    function addViewer(params) {
+        const { roomId, viewerId } = params
+
+        const room = checkRoom(roomId)
+        
+        if(room != -1) {
+            state['rooms'][room.i]['viewers'].push(viewerId)
+        }
+
+    }
+
+    function removeViewer(params) {
+        const { roomId, viewerId } = params
+
+        console.log("po")
+
+    }
+
     return {
         state,
         btnPressed,
@@ -397,8 +416,10 @@ function game(params) {
         createRoom,
         playerStatus,
         addFruit,
+        addViewer,
+        removeViewer
     }
 
 }
 
-module.exports = { game }
+module.exports = { game };

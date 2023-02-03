@@ -48,15 +48,37 @@ io.on('connection', (socket) => {
             })
         }
 
+        if(room == -1) {
+            game.state['rooms'].forEach((eRoom, iRoom) => {
+                eRoom.viewers.forEach((eViewer, iViewer) => {
+                    if(eViewer == socketId) {
+                        room = {room: eRoom.id, iRoom: iRoom, iViewer: iViewer, type: 'viewer'}
+                    }
+                })
+            })
+        }
+
         return room
+    }
+
+    const sendToViewers = (roomId, socketType, socketParams) => {
+        const room = checkRoom(roomId)
+        if(room != -1) {
+            room.e.viewers.forEach((e, i) => {
+                socket.to(e).emit(socketType, socketParams)
+            })
+        }
     }
 
     function callSocket(socketType, socketParams) {
 
         const params = socketParams
 
+        
         if(socketType == 'updateState') {
+            socket.emit('state', {state: params.state})
             socket.to(params.room).emit('state', {state: params.state})
+            sendToViewers(params.room, 'state', {state: params.state})
         }else if(socketType == 'startGame') {
             socket.to(params.room.room).emit('startGame', {room: params.room})
             socket.emit('startGame', {room: params.room})
@@ -64,9 +86,11 @@ io.on('connection', (socket) => {
             socket.join(params.roomId)
             if(params.socketType == 'player') {
                 socket.to(params.roomId).emit('playerEntered', {room: params.roomId})
+                sendToViewers(params.roomId, 'playerEntered', {room: params.roomId})
             }
         }else if(socketType == 'leaveScreen') {
             socket.to(params.room).emit('leavePlayers', {room: params.room})
+            sendToViewers(params.room, 'leavePlayers', {room: params.room})
         }else if(socketType == 'createRoom') {
             socket.emit('createdRoom', {room: params.room})
         }else if(socketType == 'playerStatus') {
@@ -77,9 +101,11 @@ io.on('connection', (socket) => {
             }
         }else if(socketType == 'fruitStatus') {
             socket.to(params.room).emit('state', {state: params.state})
+            sendToViewers(params.room, 'state', {state: params.state})
         }else if(socketType == 'countStatus') {
             socket.to(params.room.room).emit('countStatus', {room: params.room, running: params.running})
             socket.emit('countStatus', {room: params.room, running: params.running})
+            sendToViewers(params.room.room, 'countStatus', {room: params.room, running: params.running})
         }
     }
 
@@ -120,10 +146,23 @@ io.on('connection', (socket) => {
                 game.enterPlayer({socketId: socket.id, room, callSocket})
                 game.playerStatus({socketId: socket.id, room, callSocket, preset: true})
             }else if(room.e.gameStatus == 'inGame'){
-                console.log('gamein')
+                console.log('Mandar socket para pagina de espectador')
+                socket.emit('redirectView', {room})
             }
         }else {
             socket.emit('leavePlayers', {room: params.room})
+        }
+    })
+
+    socket.on('newViewer', (params) => {
+        const room = checkRoom(params.roomId)
+        if(room != -1) {
+            socket.join(params.roomId)
+            socket.emit('viewerConnected', {room})
+            game.addViewer({viewerId: socket.id, roomId: room.e.id})
+        }else {
+            console.log('sala não existe, redirecionar espectador')
+            socket.emit('leaveViewer', {room: params.room})
         }
     })
 
@@ -140,6 +179,10 @@ app.get('/', (req, res) => {
 
 app.get('/control', (req, res) => {
     res.sendFile(__dirname + '/public/html/game-control.html')
+})
+
+app.get('/view', (req, res) => {
+    res.sendFile(__dirname + '/public/html/game-viewer.html')
 })
 
 const PORT = process.env.PORT || 3000

@@ -23,29 +23,23 @@ label.addEventListener('click', () => {
 
 
 socket.on('connect', () => {
-    socket.emit('createRoom', {})
+    console.log('adicionar mais um espectador')
+    const roomId = window.location.search.replace('?roomId=', '')
+    socket.emit('newViewer', {roomId})
 })
 
-socket.on('createdRoom', (params) => {
-    var roomId;
-    roomId = params.room.id
-    game = params.room
+socket.on('viewerConnected', (params) => {
+    var roomId = params.room.e.id
+    game = params.room.e
 
-    qrCode.setAttribute('src', `https://chart.googleapis.com/chart?chs=510x510&cht=qr&chco=414141,c1c1c1&chf=bg,s,c1c1c1&chl=${PORT}/control?roomId=${roomId}`)
-    qrCode.setAttribute('title', 'Clique para conectar controle.')
+    qrCode.setAttribute('src', `https://chart.googleapis.com/chart?chs=510x510&cht=qr&chco=414141,c1c1c1&chf=bg,s,c1c1c1&chl=${PORT}/view?roomId=${roomId}`)
+    qrCode.setAttribute('title', 'Clique para abrir nova pagina de espectador.')
     qrCode.style.cursor = 'pointer'
 
-    roomIdLink = params.room.id
+    roomIdLink = params.room.e.id
     qrCode.addEventListener('click', () => {
-        window.open(`${PORT}/control?roomId=${roomIdLink}`, '_blank')
+        window.open(`${PORT}/view?roomId=${roomIdLink}`, '_blank')
     })
-})
-
-socket.on('playerEntered', (params) => {
-    const checkButton = document.getElementById('openQrCode')
-    checkButton.checked = true
-    label.innerText = 'Abrir qr-code'
-    label.title = 'Abrir qr-code'
 })
 
 socket.on('countStatus', (params) => {
@@ -80,7 +74,7 @@ socket.on('countStatus', (params) => {
 })
 
 socket.on('state', (params) => {
-    console.log('eita')
+    console.log("opa")
     game = params.state
 })
 
@@ -111,3 +105,7 @@ function renderScreen(screen) {
 
     requestAnimationFrame(() => renderScreen(screen))
 }
+
+socket.on('leaveViewer', (params) => {
+    document.location.href = `${PORT}/`
+})

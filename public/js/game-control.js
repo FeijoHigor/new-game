@@ -12,6 +12,11 @@ socket.on('connect', () => {
     socket.emit('enterRoom', {roomId})
 })
 
+socket.on('redirectView', (params) => {
+    console.log(params, `${PORT}/view?roomId=${params.room.e.id}`)
+    window.location.href = `${PORT}/view?roomId=${params.room.e.id}`
+})
+
 socket.on('roomNotFound', (params) => {
     console.log('Sala ', params.roomId, ' não encontrada')
     window.href = PORT
