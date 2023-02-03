@@ -27,14 +27,17 @@ socket.on('connect', () => {
 })
 
 socket.on('createdRoom', (params) => {
-    const roomId = params.roomId
+    var roomId;
+    roomId = params.room.id
+    game = params.room
 
     qrCode.setAttribute('src', `https://chart.googleapis.com/chart?chs=510x510&cht=qr&chco=414141,c1c1c1&chf=bg,s,c1c1c1&chl=${PORT}/control?roomId=${roomId}`)
     qrCode.setAttribute('title', 'Clique para conectar controle.')
     qrCode.style.cursor = 'pointer'
 
+    roomIdLink = params.room.id
     qrCode.addEventListener('click', () => {
-        window.open(`${PORT}/control?roomId=${roomId}`, '_blank')
+        window.open(`${PORT}/control?roomId=${roomIdLink}`, '_blank')
     })
 })
 

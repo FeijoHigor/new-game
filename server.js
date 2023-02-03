@@ -68,9 +68,8 @@ io.on('connection', (socket) => {
         }else if(socketType == 'leaveScreen') {
             socket.to(params.room).emit('leavePlayers', {room: params.room})
         }else if(socketType == 'createRoom') {
-            socket.emit('createdRoom', {roomId: params.roomId})
+            socket.emit('createdRoom', {room: params.room})
         }else if(socketType == 'playerStatus') {
-            console.log(params.playerStatus.e.id)
             if(params.playerStatus.e.id == socket.id) {
                 socket.emit('playerStatus', {playerStatus: params.playerStatus, preset: params.preset})
             }else {
@@ -114,9 +113,18 @@ io.on('connection', (socket) => {
 
     socket.on('enterRoom', (params) => {
         const room = checkRoom(params.roomId)
+        console.log(params)
 
-        game.enterPlayer({socketId: socket.id, room, callSocket})
-        game.playerStatus({socketId: socket.id, room, callSocket, preset: true})
+        if(room != -1) {
+            if(room.e.gameStatus != 'inGame') {
+                game.enterPlayer({socketId: socket.id, room, callSocket})
+                game.playerStatus({socketId: socket.id, room, callSocket, preset: true})
+            }else if(room.e.gameStatus == 'inGame'){
+                console.log('gamein')
+            }
+        }else {
+            socket.emit('leavePlayers', {room: params.room})
+        }
     })
 
     socket.on('disconnect', () => {

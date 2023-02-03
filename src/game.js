@@ -372,7 +372,7 @@ function game(params) {
             state['rooms'].push(room)
 
             callSocket('joinRoom', {roomId: roomId, socketType: 'room'})
-            callSocket('createRoom', {roomId})
+            callSocket('createRoom', {room})
         }
     }
     
