@@ -26,4 +26,4 @@
 </ul>
 
 <h2>Autores</h2>
-<p>Este jogo foi desenvolvido por [Nome do Desenvolvedor 1], [Nome do Desenvolvedor 2] e [Nome do Desenvolvedor 3].</p>
+<p>Este jogo foi desenvolvido por Higor Correa Feijó.</p>
