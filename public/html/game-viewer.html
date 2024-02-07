@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game-view</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/game-screen.css">
+    <script id="socket-js" src="https://new-game-production.up.railway.app/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <div class="default">
+        <canvas width="40" height="40" class="default-inside" id="screen"></canvas>
+    </div>
+    <input checked id="openQrCode" type="checkbox" class="openQrCode" />    
+    <div id="openQr">
+        <label for="openQrCode" id="openQrCodeLabel" title="Abrir qr-code">Abrir qr-code</label>
+    </div>
+    <div id="img-container">
+        <img id="qr-code" class="qrCodeImg open"></img>
+    </div>
+    <script src="/static/js/game-viewer.js"></script>
+</body>
+</html>

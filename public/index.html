@@ -5,19 +5,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game-screen</title>
-    <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/game-screen.css">
-    <script id="socket-js" src="https://higor-game.herokuapp.com/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/game-screen.css">
+    <script id="socket-js" src="https://new-game-production.up.railway.app/socket.io/socket.io.js"></script>
 </head>
 <body>
     <div class="default">
-        <canvas width="20" height="20" class="default-inside" id="screen"></canvas>
+        <canvas width="40" height="40" class="default-inside" id="screen"></canvas>
     </div>
     <input id="openQrCode" type="checkbox" class="openQrCode" />    
     <div id="openQr">
         <label for="openQrCode" id="openQrCodeLabel" title="Fechar qr-code">Fechar qr-code</label>
     </div>
-    <img id="qr-code" class="qrCodeImg open"></img>
-    <script src="./js/game-screen.js"></script>
+    <div id="img-container">
+        <img id="qr-code" class="qrCodeImg open"></img>
+    </div>
+    <script src="/static/js/game-screen.js"></script>
 </body>
 </html>
